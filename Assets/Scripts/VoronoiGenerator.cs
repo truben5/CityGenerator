@@ -11,34 +11,35 @@ public class VoronoiGenerator : MonoBehaviour {
     public GameObject voronoiCell;
     public GameObject parentDiagram;
 
-    private List<List<Vector2f>> cells = new List<List<Vector2f>>();
+    private List<GameObject> cells = new List<GameObject>();
 
     void Start()
     {
         GenerateVoronoi();
-        //OnDrawGizmos();
     }
 
+    // Generates the voronoi diagram from cs Delaunay. Saves the array of vertices for each cell in cells
     void GenerateVoronoi()
     {
         Rectf bounds = new Rectf(0, 0, length, width);
         List<Vector2f> points = CreateRandomPoints();
-        Voronoi voronoi = new Voronoi(points, bounds, 3);
+        Voronoi voronoi = new Voronoi(points, bounds, 2);
 
         for (int i=0; i < voronoi.Regions().Count; i++)
         {
             voronoiCell = Instantiate(voronoiCell);
-            //voronoiCell.transform.SetParent(parentDiagram);
+            voronoiCell.transform.parent = parentDiagram.transform;
             voronoiCell.name = "cell " + i;
-            voronoiCell.GetComponent<MakeVoronoiCell>().setCellVertices(voronoi.Regions()[i]);
+            voronoiCell.GetComponent<VoronoiCell>().setCellVertices(voronoi.Regions()[i]);
             //Debug.Log(this.cells);
             //Debug.Log(voronoiCell.GetComponent<MakeVoronoiCell>().getCellVertices());
-            cells.Add(voronoiCell.GetComponent<MakeVoronoiCell>().getCellVertices());
+            cells.Add(voronoiCell);
         }
 
         //Debug.Log(voronoiCell.GetComponent<MakeVoronoiCell>().getCellVertices());
     }
 
+    // Randomly creates a 2d vector in range of length and width
     private List<Vector2f> CreateRandomPoints()
     {
         List<Vector2f> points = new List<Vector2f>();
@@ -49,17 +50,18 @@ public class VoronoiGenerator : MonoBehaviour {
         return points;
     }
 
+    // Draws gizmos
     void OnDrawGizmos()
     {
         Gizmos.color = Color.black;
         for (int i=0; i < cells.Count; i++)
         {
-            List<Vector2f> cellVertices = cells[i];
+            List<Vector2f> cellVertices = cells[i].GetComponent<VoronoiCell>().getCellVertices();
             
-            for (int j = 0; j < cells[i].Count; j++)
+            for (int j = 0; j < cellVertices.Count; j++)
             {
                 int z = j + 1;
-                if (z > cells[i].Count-1)
+                if (z > cellVertices.Count-1)
                 {
                     z = 0;
                 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MakeVoronoiCell : MonoBehaviour {
+public class VoronoiCell : MonoBehaviour {
 
     private List<Vector2f> vertices = new List<Vector2f>();
 
