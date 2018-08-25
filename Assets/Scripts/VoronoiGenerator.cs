@@ -16,10 +16,11 @@ public class VoronoiGenerator : MonoBehaviour {
     void Start()
     {
         GenerateVoronoi();
+        AddBuildings();
     }
 
     // Generates the voronoi diagram from cs Delaunay. Saves the array of vertices for each cell in cells
-    void GenerateVoronoi()
+    public void GenerateVoronoi()
     {
         Rectf bounds = new Rectf(0, 0, length, width);
         List<Vector2f> points = CreateRandomPoints();
@@ -32,7 +33,6 @@ public class VoronoiGenerator : MonoBehaviour {
             voronoiCell.name = "cell " + i;
             voronoiCell.GetComponent<VoronoiCell>().setCellVertices(voronoi.Regions()[i]);
             //Debug.Log(this.cells);
-            //Debug.Log(voronoiCell.GetComponent<MakeVoronoiCell>().getCellVertices());
             cells.Add(voronoiCell);
         }
 
@@ -48,6 +48,20 @@ public class VoronoiGenerator : MonoBehaviour {
             points.Add(new Vector2f(Random.Range(0, length), Random.Range(0, width)));
         }
         return points;
+    }
+
+    // Makes buildings in cells
+    private void AddBuildings()
+    {
+        for (int i=0; i < cells.Count; i++)
+        {
+            List<Vector2f> cellVertices = cells[i].GetComponent<VoronoiCell>().getCellVertices();
+            for (int j=0; j < cellVertices.Count; j++)
+            {
+                Debug.Log("Cell " + i + ": " + cellVertices[j].x + ", " + cellVertices[j].y);
+            }
+            cells[i].GetComponent<CellFill>().MakeBuildings(cellVertices, 5);
+        }
     }
 
     // Draws gizmos
