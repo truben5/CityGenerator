@@ -7,7 +7,7 @@ public class CellFill : MonoBehaviour {
     //List<Vector2f> shapeToFill = new List<Vector2f>();
     private List<List<Vector2f>> buildings = new List<List<Vector2f>>();
     // to debug
-    private List<Vector2f> buildingVertices = new List<Vector2f>();
+    private List<StructureLine> buildingLines = new List<StructureLine>();
 
     // Checks if any sides of plot are longer than max length. If so splits the polygon
     // until all sides are smaller or equal to max length
@@ -25,7 +25,7 @@ public class CellFill : MonoBehaviour {
 
             if (Distance(plot[i].x, plot[i].y, plot[j].x, plot[j].y) > maxLength)
             {
-                Debug.Log("Line Segment between " + i + " and " + j + " is too big");
+                Debug.Log("Line Segment between " + i + " and " + j + " is greater than: " + maxLength);
                 buildings = splitPlot(buildings, maxLength, 0, i, j);
             }
         }
@@ -45,15 +45,23 @@ public class CellFill : MonoBehaviour {
             myPlot[segEndInd].x, myPlot[segEndInd].y);
 
         List<int> intersectingSegInd = LineIntersection(segEndInd, midPoint, slope, myPlot);
-
-        Vector2f nextLinePoint = new Vector2f(midPoint.x + invSlope, midPoint.y + 1);
-
-        Debug.Log("ind of line segment intersected:" + intersectingSegInd[0]);
+        Vector2f nextLinePoint;
+        if (double.IsInfinity(invSlope))
+        {
+            Debug.Log("infinity is invslope");
+            nextLinePoint = new Vector2f(midPoint.x, midPoint.y + 1);
+        }
+        else
+        {
+            nextLinePoint = new Vector2f(midPoint.x + 1, midPoint.y + invSlope);
+        }
+        Debug.Log("Next line point:" + nextLinePoint.x + " " + nextLinePoint.y);
+        Debug.Log("ind of line segment intersected:" + intersectingSegInd[0] + " " +  intersectingSegInd[1]);
         Vector2f intersection = Intersection(midPoint, nextLinePoint, myPlot[intersectingSegInd[0]], 
             myPlot[intersectingSegInd[1]]);
 
-        buildingVertices.Add(midPoint);
-        buildingVertices.Add(intersection);
+        StructureLine wall = new StructureLine(midPoint, intersection);
+        buildingLines.Add(wall);
 
         return buildings;
 
@@ -63,6 +71,7 @@ public class CellFill : MonoBehaviour {
     //private float largestDist = 0;
 
     //// Finds largest distance between two vertices of cell and returns those vectors
+    //public List<Vector2f> LargestLineSegment(List<Vector2f> cellVertices)
     //public List<Vector2f> LargestLineSegment(List<Vector2f> cellVertices)
     //{
     //    List<Vector2f> largestSegment = new List<Vector2f>();
@@ -146,18 +155,23 @@ public class CellFill : MonoBehaviour {
 
             float newLineSlope = Slope(midPoint.x, midPoint.y, plot[i].x, plot[i].y);
             float newLineDegrees = Mathf.Rad2Deg * Mathf.Atan(newLineSlope);
-
+            Debug.Log("180 - " + newLineDegrees + " - " + segmentAngle);
             float degrees = 180 - Mathf.Abs(newLineDegrees - segmentAngle);
-            Debug.Log("Degrees of line are: " + degrees);
-            if (degrees >= 90)
+            Debug.Log("Degrees of line to vertex are: " + degrees);
+            if (degrees > 90 && degrees < 180)
             {
                 Debug.Log("Sweet spot degrees");
-                plotIntersectionInd.Add(j);
-                if (j == 0)
+                plotIntersectionInd.Add(i);
+                if (i == 0)
                 {
-                    j = plot.Count - 1;
+                    i = plot.Count - 1;
+                    plotIntersectionInd.Add(i);
+
                 }
-                plotIntersectionInd.Add(j - 1);
+                else
+                {
+                    plotIntersectionInd.Add(i - 1);
+                }
                 return plotIntersectionInd;
             }
             j++;
@@ -171,17 +185,20 @@ public class CellFill : MonoBehaviour {
     }
 
     // Finds point of intersection between a line and line segment
-    private Vector2f Intersection(Vector2f linePoint1, Vector2f linePoint2, Vector2f startSeg, Vector2f endSeg)
+    private Vector2f Intersection(Vector2f s1, Vector2f e1, Vector2f s2, Vector2f e2)
     {
-        // Line represented as a1x + b1y = c1
-        float a1 = linePoint2.y - linePoint1.y;
-        float b1 = linePoint1.x - linePoint2.x;
-        float c1 = a1 * (linePoint1.x) + b1 * (linePoint1.y);
+        Debug.Log("intersection of: " + s1.x + ", " + s1.y + " and " + e1.x + ", " + e2.y + " with " + 
+            s2.x + ", " + s2.y + " and " + e2.x + ", " + e2.y);
 
-        // Line segment represented as a2x + b2y = c2
-        float a2 = endSeg.y - startSeg.y;
-        float b2 = startSeg.x - endSeg.x;
-        float c2 = a2 * (startSeg.x) + b2 * (startSeg.y);
+        // Line represented as a1x + b1y = c1
+        float a1 = e1.y - s1.y;
+        float b1 = s1.x - e1.x;
+        float c1 = a1 * s1.x + b1 * s1.y;
+
+        // Line represented as a2x + b2y = c2
+        float a2 = e2.y - s2.y;
+        float b2 = s2.x - e2.x;
+        float c2 = a2 * s2.x + b2 * s2.y;
 
         Debug.Log("a1: " + a1 + " b1: " + b1 + " c1: " + c1 + " a2: " + a2 + " b2: " + b2 + " c2: " + c2);
 
@@ -204,12 +221,9 @@ public class CellFill : MonoBehaviour {
     {
         //Debug.Log(buildingVertices);
         Gizmos.color = Color.red;
-        for (int i = 0; i < buildingVertices.Count - 1; i++)
+        for (int i = 0; i < buildingLines.Count; i++)
         {
-            int z = i + 1;
-            Vector3 startVector = new Vector3(buildingVertices[i].x, buildingVertices[i].y, 0);
-            Vector3 endVector = new Vector3(buildingVertices[z].x, buildingVertices[z].y, 0);
-            Gizmos.DrawLine(startVector, endVector);
+            Gizmos.DrawLine(buildingLines[i].getStart(), buildingLines[i].getEnd());
 
         }
     }

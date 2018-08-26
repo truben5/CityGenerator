@@ -24,9 +24,9 @@ public class VoronoiGenerator : MonoBehaviour {
     {
         Rectf bounds = new Rectf(0, 0, length, width);
         List<Vector2f> points = CreateRandomPoints();
-        Voronoi voronoi = new Voronoi(points, bounds, 2);
+        Voronoi voronoi = new Voronoi(points, bounds, 3);
 
-        for (int i=0; i < voronoi.Regions().Count; i++)
+        for (int i=0; i < 1; i++)
         {
             voronoiCell = Instantiate(voronoiCell);
             voronoiCell.transform.parent = parentDiagram.transform;
