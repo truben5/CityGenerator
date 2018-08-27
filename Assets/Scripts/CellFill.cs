@@ -108,7 +108,7 @@ public class CellFill : MonoBehaviour {
     //}
 
     // Calculates distance between two points
-    private float Distance(float x1, float y1, float x2, float y2)
+    public float Distance(float x1, float y1, float x2, float y2)
     {
         float x = Mathf.Abs(x2 - x1);
         float y = Mathf.Abs(y2 - y1);
@@ -117,7 +117,7 @@ public class CellFill : MonoBehaviour {
     }
 
     // Calculates midpoint between two points
-    private Vector2f Midpoint(float x1, float y1, float x2, float y2)
+    public Vector2f Midpoint(float x1, float y1, float x2, float y2)
     {
         Vector2f mid = new Vector2f((x1 + x2)/2.0, (y1 + y2)/2.0);
         Debug.Log("Midpoint :" + mid.x + ", " + mid.y);
@@ -125,7 +125,7 @@ public class CellFill : MonoBehaviour {
     } 
 
     // Calculates slope between two points
-    private float Slope(float x1, float y1, float x2, float y2)
+    public float Slope(float x1, float y1, float x2, float y2)
     {
         float slope = (y2 - y1)/(x2 - x1);
         Debug.Log("slope: " + slope);
@@ -133,7 +133,7 @@ public class CellFill : MonoBehaviour {
     }
 
     // Calculates inverse slope of line
-    private float InvSlope(float slope)
+    public float InvSlope(float slope)
     {
         float invSlope = -1 * (1 / slope);
         Debug.Log("inv slope: " + invSlope);
@@ -141,7 +141,7 @@ public class CellFill : MonoBehaviour {
     }
 
     // For the line segment the bisector intersects, it returns the indices of those vertices
-    private List<int> LineIntersection(int startInd,Vector2f midPoint, float slope, List<Vector2f> plot)
+    public List<int> LineIntersection(int startInd,Vector2f midPoint, float slope, List<Vector2f> plot)
     {
         List<int> plotIntersectionInd = new List<int>();
         int j = startInd + 1;
@@ -162,15 +162,14 @@ public class CellFill : MonoBehaviour {
             {
                 Debug.Log("Sweet spot degrees");
                 plotIntersectionInd.Add(i);
-                if (i == 0)
+                if (i > plot.Count - 1)
                 {
-                    i = plot.Count - 1;
-                    plotIntersectionInd.Add(i);
+                    plotIntersectionInd.Add(0);
 
                 }
                 else
                 {
-                    plotIntersectionInd.Add(i - 1);
+                    plotIntersectionInd.Add(i + 1);
                 }
                 return plotIntersectionInd;
             }
@@ -185,7 +184,7 @@ public class CellFill : MonoBehaviour {
     }
 
     // Finds point of intersection between a line and line segment
-    private Vector2f Intersection(Vector2f s1, Vector2f e1, Vector2f s2, Vector2f e2)
+    public Vector2f Intersection(Vector2f s1, Vector2f e1, Vector2f s2, Vector2f e2)
     {
         Debug.Log("intersection of: " + s1.x + ", " + s1.y + " and " + e1.x + ", " + e2.y + " with " + 
             s2.x + ", " + s2.y + " and " + e2.x + ", " + e2.y);
