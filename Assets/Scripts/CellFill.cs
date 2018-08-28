@@ -44,7 +44,6 @@ public class CellFill : MonoBehaviour {
         Vector2f midPoint = Midpoint(myPlot[segStartInd].x, myPlot[segStartInd].y,
             myPlot[segEndInd].x, myPlot[segEndInd].y);
 
-        List<Vector2f> intersectingSeg = LineIntersection(segEndInd, midPoint, slope, myPlot);
         Vector2f nextLinePoint;
         if (double.IsInfinity(invSlope))
         {
@@ -53,11 +52,12 @@ public class CellFill : MonoBehaviour {
         }
         else
         {
-            Debug.Log("Next point of bisector is: midPoint.x + 1, midPoint.y " + invSlope);
+            Debug.Log("Next point of bisector is: midPoint.x + 1, midPoint.y + " + invSlope);
             nextLinePoint = new Vector2f(midPoint.x + 1, midPoint.y + invSlope);
         }
+        List<Vector2f> intersectingSeg = LineIntersection(segEndInd, midPoint, slope, myPlot);
         Debug.Log("Next line point:" + nextLinePoint.x + " " + nextLinePoint.y);
-        Debug.Log("ind of line segment intersected:" + intersectingSeg[0] + " " +  intersectingSeg[1]);
+        Debug.Log("line segment intersected:" + intersectingSeg[0] + " " +  intersectingSeg[1]);
         Vector2f intersection = Intersection(midPoint, nextLinePoint, intersectingSeg[0], 
            intersectingSeg[1]);
 
@@ -150,14 +150,14 @@ public class CellFill : MonoBehaviour {
         for (int i = startInd; i < plot.Count + startInd; i++)
         {
   
-            int l = (i  + 1) % plot.Count;
+            int l = (i + 1) % plot.Count;
             Debug.Log("l = " + l);
-            int j = i % plot.Count;
+            int j = (i) % plot.Count;
             float newLineSlope = Slope(midPoint.x, midPoint.y, plot[l].x, plot[l].y);
             float newLineDegrees = Mathf.Rad2Deg * Mathf.Atan(newLineSlope);
             float degrees = 180 - Mathf.Abs(newLineDegrees - segmentAngle);
             Debug.Log("Degree of line = " + degrees);
-            if (degrees > 90 && degrees != 180)
+            if (degrees > 90)
             {
                 plotIntersection.Add(plot[l]);
                 plotIntersection.Add(plot[j]);
@@ -175,7 +175,9 @@ public class CellFill : MonoBehaviour {
     // Finds point of intersection between a line and line segment
     public Vector2f Intersection(Vector2f s1, Vector2f e1, Vector2f s2, Vector2f e2)
     {
-        Debug.Log("intersection of: " + s1.x + ", " + s1.y + " and " + e1.x + ", " + e2.y + " with " + 
+        Debug.Log("intersection of: " + s1 + " and " + e1 + " with " + 
+            s2 + " and " + e2);
+        Debug.Log("intersection of: " + s1.x + ", " + s1.y + " and " + e1.x + ", " + e1.y + " with " +
             s2.x + ", " + s2.y + " and " + e2.x + ", " + e2.y);
 
         // Line represented as a1x + b1y = c1
