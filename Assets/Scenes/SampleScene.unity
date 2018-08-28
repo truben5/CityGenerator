@@ -333,7 +333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85fa4ab9fd27c84b8349c06dd2ec462, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellNum: 4
+  cellNum: 10
   width: 50
   length: 50
   voronoiCell: {fileID: 1582214741797256, guid: 6ae2feabd00ed8846a03d5cc2145bdda,

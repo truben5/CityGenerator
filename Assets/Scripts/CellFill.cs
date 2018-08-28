@@ -55,13 +55,22 @@ public class CellFill : MonoBehaviour {
             Debug.Log("Next point of bisector is: midPoint.x + 1, midPoint.y + " + invSlope);
             nextLinePoint = new Vector2f(midPoint.x + 1, midPoint.y + invSlope);
         }
-        List<Vector2f> intersectingSeg = LineIntersection(segEndInd, midPoint, slope, myPlot);
+        List<Vector2f> intersectingSeg = LineIntersection(segEndInd, midPoint, invSlope, myPlot);
         Debug.Log("Next line point:" + nextLinePoint.x + " " + nextLinePoint.y);
-        Debug.Log("line segment intersected:" + intersectingSeg[0] + " " +  intersectingSeg[1]);
-        Vector2f intersection = Intersection(midPoint, nextLinePoint, intersectingSeg[0], 
+        //Debug.Log("line segment intersected:" + intersectingSeg[0] + " " +  intersectingSeg[1]);
+        StructureLine wall;
+        if(intersectingSeg.Count == 1)
+        {
+            wall = new StructureLine(midPoint, intersectingSeg[0]);
+        }
+        else
+        {
+            Vector2f intersection = Intersection(midPoint, nextLinePoint, intersectingSeg[0], 
            intersectingSeg[1]);
 
-        StructureLine wall = new StructureLine(midPoint, intersection);
+            wall = new StructureLine(midPoint, intersection);
+        }
+        
         buildingLines.Add(wall);
 
         return buildings;
@@ -142,33 +151,49 @@ public class CellFill : MonoBehaviour {
     }
 
     // For the line segment the bisector intersects, it returns the indices of those vertices
-    public List<Vector2f> LineIntersection(int startInd,Vector2f midPoint, float slope, List<Vector2f> plot)
+    public List<Vector2f> LineIntersection(int startInd,Vector2f midPoint, float invSlope, List<Vector2f> plot)
     {
         List<Vector2f> plotIntersection = new List<Vector2f>();
-        
-        float segmentAngle = Mathf.Rad2Deg * Mathf.Atan(slope);
+
+        //float segmentAngle = Mathf.Rad2Deg * Mathf.Atan(slope);
+        Debug.Log("In LineIntersection invSlope is: " + invSlope);
+        int trend = -1;
+        int location = -1;
         for (int i = startInd; i < plot.Count + startInd; i++)
         {
-  
             int l = (i + 1) % plot.Count;
             Debug.Log("l = " + l);
             int j = (i) % plot.Count;
-            float newLineSlope = Slope(midPoint.x, midPoint.y, plot[l].x, plot[l].y);
-            float newLineDegrees = Mathf.Rad2Deg * Mathf.Atan(newLineSlope);
-            float degrees = 180 - Mathf.Abs(newLineDegrees - segmentAngle);
-            Debug.Log("Degree of line = " + degrees);
-            if (degrees > 90)
+            Debug.Log("Checking between points: " + plot[l] + " and " + plot[j]);
+
+            float b = midPoint.y - invSlope * midPoint.x;
+            if (float.IsInfinity(b))
+            {
+                throw new System.Exception("b is infinity");
+            }
+            location = locationToLine(invSlope, b, plot[l]);
+            if (trend == -1)
+            {
+                trend = location;
+            }
+            else if(trend != location)
             {
                 plotIntersection.Add(plot[l]);
                 plotIntersection.Add(plot[j]);
-                break;
+                return plotIntersection;
             }
+            else
+            {
+                plotIntersection.Add(plot[l]);
+                return plotIntersection;
+            }
+            Debug.Log("Trend and location are: " + trend + " and " + location);
         }
 
-        if (plotIntersection.Count != 2)
-        {
-            throw new System.Exception("No intersecting line for bisector, length of intersection matrix is: " + plotIntersection.Count);
-        }
+        //if (plotIntersection.Count != 2)
+        //{
+        //    throw new System.Exception("No intersecting line for bisector, location of point was: " + location + " and trend was " + trend);
+        //}
         return plotIntersection;
     }
 
@@ -177,8 +202,6 @@ public class CellFill : MonoBehaviour {
     {
         Debug.Log("intersection of: " + s1 + " and " + e1 + " with " + 
             s2 + " and " + e2);
-        Debug.Log("intersection of: " + s1.x + ", " + s1.y + " and " + e1.x + ", " + e1.y + " with " +
-            s2.x + ", " + s2.y + " and " + e2.x + ", " + e2.y);
 
         // Line represented as a1x + b1y = c1
         float a1 = e1.y - s1.y;
@@ -194,11 +217,47 @@ public class CellFill : MonoBehaviour {
 
         float determinant = a1 * b2 - a2 * b1;
 
+        if(determinant == 0)
+        {
+            throw new System.Exception("Determinant is 0, lines are parallel");
+        }
 
         double x = (b2 * c1 - b1 * c2) / determinant;
         double y = (a1 * c2 - a2 * c1) / determinant;
         Debug.Log("Intersection point is: " + x + ", " + y);
         return new Vector2f(x,y);
+    }
+
+    // Takes in the slope and y intercept for a line equation.  Determines if point is below, above, or on line 
+    public int locationToLine(float m, float b, Vector2f p)
+    {
+        Debug.Log("Equation of line is: y = " + m + "x + " + b);
+        float resultY;
+        if (double.IsInfinity(m))
+        {
+            resultY = b;
+            Debug.Log("resultY = " + b);
+        }
+        else
+        {
+            resultY = m * p.x + b;
+        }
+
+        if (resultY < p.y)
+        {
+            return 0;
+        }
+        else if (resultY > p.y)
+        {
+            return 1;
+        }
+        else if (resultY == p.y)
+        {
+            return 2;
+        }
+        else{
+            throw new System.Exception("unthought of case");
+        }
     }
 
     void OnDrawGizmos()
