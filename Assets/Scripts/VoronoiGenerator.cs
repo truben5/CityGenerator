@@ -17,6 +17,8 @@ public class VoronoiGenerator : MonoBehaviour {
     {
         GenerateVoronoi();
         AddBuildings();
+        //voronoiCell.GetComponent<CellFillTest>();
+
     }
 
     // Generates the voronoi diagram from cs Delaunay. Saves the array of vertices for each cell in cells

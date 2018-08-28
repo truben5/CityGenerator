@@ -307,6 +307,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47cc83d8ade914748ba1b4cf875b63bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  voronoiCell: {fileID: 1582214741797256, guid: 6ae2feabd00ed8846a03d5cc2145bdda,
+    type: 2}
 --- !u!4 &1432894855
 Transform:
   m_ObjectHideFlags: 0
