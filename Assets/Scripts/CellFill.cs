@@ -167,11 +167,8 @@ public class CellFill : MonoBehaviour {
             Debug.Log("Checking between points: " + plot[l] + " and " + plot[j]);
 
             float b = midPoint.y - invSlope * midPoint.x;
-            if (float.IsInfinity(b))
-            {
-                throw new System.Exception("b is infinity");
-            }
-            location = locationToLine(invSlope, b, plot[l]);
+            location = locationToLine(invSlope, b, plot[l], midPoint.x);
+            Debug.Log("trend is: " + trend + " and location is: " + location);
             if (trend == -1)
             {
                 trend = location;
@@ -182,11 +179,12 @@ public class CellFill : MonoBehaviour {
                 plotIntersection.Add(plot[j]);
                 return plotIntersection;
             }
-            else
+            else if(trend == 2)
             {
                 plotIntersection.Add(plot[l]);
                 return plotIntersection;
             }
+            
             Debug.Log("Trend and location are: " + trend + " and " + location);
         }
 
@@ -197,7 +195,7 @@ public class CellFill : MonoBehaviour {
         return plotIntersection;
     }
 
-    // Finds point of intersection between a line and line segment
+    // Finds point of intersection two lines
     public Vector2f Intersection(Vector2f s1, Vector2f e1, Vector2f s2, Vector2f e2)
     {
         Debug.Log("intersection of: " + s1 + " and " + e1 + " with " + 
@@ -229,14 +227,30 @@ public class CellFill : MonoBehaviour {
     }
 
     // Takes in the slope and y intercept for a line equation.  Determines if point is below, above, or on line 
-    public int locationToLine(float m, float b, Vector2f p)
+    // If the slope is infinite (vertical line) uses the x values to determine if point is right or left of line
+    public int locationToLine(float m, float b, Vector2f p, float midPointX)
     {
         Debug.Log("Equation of line is: y = " + m + "x + " + b);
         float resultY;
         if (double.IsInfinity(m))
         {
-            resultY = b;
-            Debug.Log("resultY = " + b);
+            Debug.Log("b is infinity");
+            if (midPointX < p.x)
+            {
+                return 0;
+            }
+            else if (midPointX > p.x)
+            {
+                return 1;
+            }
+            else if (midPointX == p.x)
+            {
+                return 2;
+            }
+            else
+            {
+                throw new System.Exception("Unresolved case");
+            }
         }
         else
         {

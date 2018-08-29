@@ -8,6 +8,7 @@ public class VoronoiGenerator : MonoBehaviour {
     public int cellNum;
     public int width;
     public int length;
+    public int maxLength;
     public GameObject voronoiCell;
     public GameObject parentDiagram;
 
@@ -28,7 +29,7 @@ public class VoronoiGenerator : MonoBehaviour {
         List<Vector2f> points = CreateRandomPoints();
         Voronoi voronoi = new Voronoi(points, bounds, 3);
 
-        for (int i=0; i < 1; i++)
+        for (int i=0; i < points.Count; i++)
         {
             voronoiCell = Instantiate(voronoiCell);
             voronoiCell.transform.parent = parentDiagram.transform;
@@ -62,7 +63,7 @@ public class VoronoiGenerator : MonoBehaviour {
             {
                 Debug.Log("Cell " + i + ": " + cellVertices[j].x + ", " + cellVertices[j].y);
             }
-            cells[i].GetComponent<CellFill>().MakeBuildings(cellVertices, 5);
+            cells[i].GetComponent<CellFill>().MakeBuildings(cellVertices, maxLength);
         }
     }
 
