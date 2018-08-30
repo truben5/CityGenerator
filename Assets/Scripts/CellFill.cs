@@ -7,31 +7,31 @@ public class CellFill : MonoBehaviour {
     //List<Vector2f> shapeToFill = new List<Vector2f>();
     private List<List<Vector2f>> buildings = new List<List<Vector2f>>();
     // to debug
-    private List<StructureLine> buildingLines = new List<StructureLine>();
+    //private List<StructureLine> buildingLines = new List<StructureLine>();
 
     // Checks if any sides of plot are longer than max length. If so splits the polygon
     // until all sides are smaller or equal to max length
-    public void MakeBuildings(List<Vector2f> plot, int maxLength)
+    public void MakeBuildings(List<Vector2f> cellPlot, int maxLength)
     {
-        buildings.Add(plot);
+        buildings.Add(cellPlot);
 
-        for (int i=0; i < plot.Count; i++)
+        for (int i=0; i < cellPlot.Count; i++)
         {
             int j = i + 1;
-            if (j > plot.Count - 1)
+            if (j > cellPlot.Count - 1)
             {
                 j = 0;
             }
-
-            if (Distance(plot[i].x, plot[i].y, plot[j].x, plot[j].y) > maxLength)
+            float dist = Distance(cellPlot[i].x, cellPlot[i].y, cellPlot[j].x, cellPlot[j].y);
+            if (dist > maxLength)
             {
-                Debug.Log("Line Segment between " + i + " and " + j + " is greater than: " + maxLength);
-                buildings = splitPlot(buildings, maxLength, 0, i, j);
+                Debug.Log("Line Segment between " + i + " and " + j + " is " + dist);
+                buildings = BisectCell(buildings, maxLength, 0, i, j);
             }
         }
     }
 
-    private List<List<Vector2f>> splitPlot(List<List<Vector2f>> buildings, int maxLength,
+    private List<List<Vector2f>> BisectCell(List<List<Vector2f>> buildings, int maxLength,
         int plotInd, int segStartInd, int segEndInd)
     {
         List<Vector2f> myPlot = buildings[plotInd];
@@ -68,15 +68,54 @@ public class CellFill : MonoBehaviour {
             Vector2f intersection = Intersection(midPoint, nextLinePoint, intersectingSeg[0], 
            intersectingSeg[1]);
 
-            wall = new StructureLine(midPoint, intersection);
+            //wall = new StructureLine(midPoint, intersection);
         }
         
-        buildingLines.Add(wall);
+
+        //buildingLines.Add(wall);
+
 
         return buildings;
 
     }
 
+    // Splits array of vertices into two separate arrays representing individual buildings. Splits along perpendicular bisector
+    public List<List<Vector2f>> splitPlotArray(List<Vector2f> building, Vector2f bisector, int bisectorInd, Vector2f intersection, int intersectionInd, bool intersectIsVertex)
+    {
+        List<List<Vector2f>> newBuildings = new List<List<Vector2f>>();
+        List<Vector2f> plot1 = new List<Vector2f>();
+        List<Vector2f> plot2 = new List<Vector2f>();
+        bool first = true;
+        for (int i = 0; i < building.Count; i++)
+        {
+            if (i < bisectorInd && first)
+            {
+                plot1.Add(building[i]);
+            }
+            else if (i > bisectorInd && !first)
+            {
+                plot2.Add(building[i]);
+            }
+            else if (i == bisectorInd )
+            {
+                plot1.Add(building[i]);
+                first = false;
+            }
+            else if (i == intersectionInd && !intersectIsVertex)
+            {
+                plot2.Add(building[i]);
+                first = true;
+            }
+            else if (i == intersectionInd && intersectIsVertex)
+            {
+
+            }
+
+        }
+        newBuildings.Add(plot1);
+        newBuildings.Add(plot2);
+        return newBuildings;
+    }
 
     //private float largestDist = 0;
 
@@ -274,15 +313,15 @@ public class CellFill : MonoBehaviour {
         }
     }
 
-    void OnDrawGizmos()
-    {
-        //Debug.Log(buildingVertices);
-        Gizmos.color = Color.red;
-        for (int i = 0; i < buildingLines.Count; i++)
-        {
-            Gizmos.DrawLine(buildingLines[i].getStart(), buildingLines[i].getEnd());
+    //void OnDrawGizmos()
+    //{
+    //    //Debug.Log(buildingVertices);
+    //    Gizmos.color = Color.red;
+    //    for (int i = 0; i < buildingLines.Count; i++)
+    //    {
+    //        Gizmos.DrawLine(buildingLines[i].getStart(), buildingLines[i].getEnd());
 
-        }
-    }
+    //    }
+    //}
 }
 
