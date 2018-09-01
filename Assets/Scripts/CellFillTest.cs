@@ -83,29 +83,16 @@ public class CellFillTest : MonoBehaviour {
         plot1.Add(new Vector2f(30,40));
 
         Debug.Log("Test 1");
-        // Slope between (20,20) and (30,40)
-        float slope = voronoiCell.GetComponent<CellFill>().Slope(plot1[2].x, plot1[2].y, plot1[3].x, plot1[3].y);
-        Debug.Log(slope);
-        float invSlope = voronoiCell.GetComponent<CellFill>().InvSlope(slope);
-        midPoint = voronoiCell.GetComponent<CellFill>().Midpoint(plot1[2].x, plot1[2].y, plot1[3].x, plot1[3].y);
-        Debug.Log(invSlope);
-        List<int> lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(3, midPoint, invSlope, plot1);
-        if (lineSeg[0] != 0 || lineSeg[1] != 1)
-        {
-            throw new System.Exception("Extpected (10,40) and (10,30) but received " + lineSeg[0] + " and " + lineSeg[1]);
-        }
-
-        Debug.Log("Test 2");
         // Slope between (10,40) and (10,30)
-        slope = voronoiCell.GetComponent<CellFill>().Slope(plot1[0].x, plot1[0].y, plot1[1].x, plot1[1].y);
-        invSlope = voronoiCell.GetComponent<CellFill>().InvSlope(slope);
-        midPoint = voronoiCell.GetComponent<CellFill>().Midpoint(plot1[0].x,plot1[0].y, plot1[1].x, plot1[1].y);
+        float slope = voronoiCell.GetComponent<CellFill>().Slope(plot1[0].x, plot1[0].y, plot1[1].x, plot1[1].y);
+        float invSlope = voronoiCell.GetComponent<CellFill>().InvSlope(slope);
+        midPoint = voronoiCell.GetComponent<CellFill>().Midpoint(plot1[0].x, plot1[0].y, plot1[1].x, plot1[1].y);
         if (midPoint.x != 10 || midPoint.y != 35)
         {
             throw new System.Exception("Incorrect Midpoint");
         }
         // Line segment bisector intersects with
-        lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(1, midPoint, invSlope, plot1);
+        List<int> lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(1, midPoint, invSlope, plot1);
         if (lineSeg[0] != 2 || lineSeg[1] != 3)
         {
             throw new System.Exception("Extpected intersection between (20,20) and (30,40) but received " + lineSeg[0] + " and " + lineSeg[1]);
@@ -119,19 +106,53 @@ public class CellFillTest : MonoBehaviour {
             throw new System.Exception("Extpected intersection to be (27.5,35) but received " + intersection.x + ", " + intersection.y);
         }
 
-        //Debug.Log("Test 3");
-        //lineSeg = null;
-        //// Between (30,40) and (10,40)
-        //slope = voronoiCell.GetComponent<CellFill>().Slope(plot[3].x, plot[3].y, plot[0].x, plot[0].y);
-        //Debug.Log(slope);
-        //invSlope = voronoiCell.GetComponent<CellFill>().InvSlope(slope);
-        //midPoint = voronoiCell.GetComponent<CellFill>().Midpoint(plot[3].x, plot[3].y, plot[0].x, plot[0].y);
-        //lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(1, midPoint, invSlope, plot);
-        //Debug.Log("count = " + lineSeg.Count);
-        //if (lineSeg.Count > 1 && lineSeg[0] != plot[2])
-        //{
-        //    throw new System.Exception("Extpected (20,20) and (30,40) but received " + lineSeg[1] + " and " + lineSeg[0]);
-        //}
+        Debug.Log("Test 2");
+        lineSeg = null;
+        // Between (10,30) and (20,20)
+        slope = voronoiCell.GetComponent<CellFill>().Slope(plot1[1].x, plot1[1].y, plot1[2].x, plot1[2].y);
+        invSlope = voronoiCell.GetComponent<CellFill>().InvSlope(slope);
+        midPoint = voronoiCell.GetComponent<CellFill>().Midpoint(plot1[1].x, plot1[1].y, plot1[2].x, plot1[2].y);
+
+        lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(2, midPoint, invSlope, plot1);
+        if (lineSeg[0] != 2 || lineSeg[1] != 3)
+        {
+            throw new System.Exception("Extpected intersection between (20,20) and (30,40) but received " + lineSeg[0] + " and " + lineSeg[1]);
+        }
+        nextPoint = new Vector2f(midPoint.x + 1, midPoint.y + invSlope);
+        intersection = voronoiCell.GetComponent<CellFill>().Intersection(midPoint, nextPoint, plot1[lineSeg[0]], plot1[lineSeg[1]]);
+        if (intersection.x != 30 || intersection.y != 40)
+        {
+            throw new System.Exception("Extpected intersection to be (30,40) but received " + intersection.x + ", " + intersection.y);
+        }
+
+
+        Debug.Log("Test 3");
+        // Slope between (20,20) and (30,40)
+        slope = voronoiCell.GetComponent<CellFill>().Slope(plot1[2].x, plot1[2].y, plot1[3].x, plot1[3].y);
+        Debug.Log(slope);
+        invSlope = voronoiCell.GetComponent<CellFill>().InvSlope(slope);
+        midPoint = voronoiCell.GetComponent<CellFill>().Midpoint(plot1[2].x, plot1[2].y, plot1[3].x, plot1[3].y);
+        Debug.Log(invSlope);
+        lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(3, midPoint, invSlope, plot1);
+        if (lineSeg[0] != 0 || lineSeg[1] != 1)
+        {
+            throw new System.Exception("Extpected (10,40) and (10,30) but received " + lineSeg[0] + " and " + lineSeg[1]);
+        }
+
+        Debug.Log("Test 4");
+        lineSeg = null;
+        // Between (30,40) and (10,40)
+        slope = voronoiCell.GetComponent<CellFill>().Slope(plot1[3].x, plot1[3].y, plot1[0].x, plot1[0].y);
+        Debug.Log(slope);
+        invSlope = voronoiCell.GetComponent<CellFill>().InvSlope(slope);
+        midPoint = voronoiCell.GetComponent<CellFill>().Midpoint(plot1[3].x, plot1[3].y, plot1[0].x, plot1[0].y);
+        lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(0, midPoint, invSlope, plot1);
+        Debug.Log("count = " + lineSeg.Count);
+        if (lineSeg.Count > 1 && lineSeg[0] != 2)
+        {
+            throw new System.Exception("Extpected (20,20) and (30,40) but received " + lineSeg[0] + " and " + lineSeg[1]);
+        }
+
     }
 
     public void SplitPlotArrayTest()
@@ -183,7 +204,7 @@ public class CellFillTest : MonoBehaviour {
         List<List<Vector2f>> newShapes = new List<List<Vector2f>>();
         newShapes.Add(plot1);
 
-        newShapes = voronoiCell.GetComponent<CellFill>().MakeBuildingShapes(newShapes, 5);
+        newShapes = voronoiCell.GetComponent<CellFill>().MakeBuildingShapes(newShapes, 5, 0);
     }
 
 }

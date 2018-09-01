@@ -15,7 +15,7 @@ public class CellFill : MonoBehaviour {
     public void MakeBuildings(List<List<Vector2f>> cellPlot, int maxLength)
     {
         Debug.Log("Starting MakeBuildings");
-        cellPlot = MakeBuildingShapes(cellPlot, maxLength);
+        cellPlot = MakeBuildingShapes(cellPlot, maxLength, 0);
         for (int i=0; i < cellPlot.Count; i++)
         {
             for (int j = 0; j < cellPlot[i].Count; j++)
@@ -32,9 +32,9 @@ public class CellFill : MonoBehaviour {
         
     }
 
-    public List<List<Vector2f>> MakeBuildingShapes(List<List<Vector2f>> cellPlot, int maxLength)
+    public List<List<Vector2f>> MakeBuildingShapes(List<List<Vector2f>> cellPlot, int maxLength, int ptr)
     {
-        for (int i = 0; i < cellPlot.Count; i++)
+        for (int i = ptr; i < cellPlot.Count; i++)
             for (int j = 0; j < cellPlot[i].Count; j++)
             {
                 int k = j + 1;
@@ -44,10 +44,11 @@ public class CellFill : MonoBehaviour {
                 }
                 if (TooBig(cellPlot[i][j], cellPlot[i][k], maxLength))
                 {
-                    cellPlot = BisectCell(cellPlot[i], maxLength, 0, j, k);
-
+                    List<List<Vector2f>> splitPlot = BisectCell(cellPlot[i], maxLength, 0, j, k);
+                    cellPlot[i] = splitPlot[0];
+                    cellPlot.Insert(i+1, splitPlot[1]);
                     //Recursive Call
-                    cellPlot = MakeBuildingShapes(cellPlot, maxLength);
+                    cellPlot = MakeBuildingShapes(cellPlot, maxLength, i);
                  
                 }
             }
@@ -80,7 +81,7 @@ public class CellFill : MonoBehaviour {
         }
         List<int> intersectingSeg = LineIntersection(segEndInd, midPoint, invSlope, myPlot);
         //Debug.Log("Next line point:" + nextLinePoint.x + " " + nextLinePoint.y);
-        //Debug.Log("line segment intersected:" + intersectingSeg[0] + " " +  intersectingSeg[1]);
+        Debug.Log("line segment intersected:" + intersectingSeg[0] + " " +  intersectingSeg[1]);
         //StructureLine wall;
         bool intersectIsVertex = false;
         Vector2f intersection;
@@ -209,6 +210,9 @@ public class CellFill : MonoBehaviour {
     }
 
     // For the line segment the bisector intersects, it returns the indices of those vertices
+    // Finds equation for perpendicular bisector. Plugs in x value of vertex in polygon to see if 
+    // the point lies above or below the line.  When the orientation changes between above to below or 
+    // vice versa, we know the intersection is between the 2 segments we were testing
     public List<int> LineIntersection(int startInd,Vector2f midPoint, float invSlope, List<Vector2f> plot)
     {
         List<int> plotIntersection = new List<int>();
@@ -220,19 +224,20 @@ public class CellFill : MonoBehaviour {
         for (int i = startInd; i < plot.Count + startInd; i++)
         {
             int l = (i + 1) % plot.Count;
-            //Debug.Log("l = " + l);
+            Debug.Log("l = " + l);
             int j = (i) % plot.Count;
-            //Debug.Log("Checking between points: " + plot[l] + " and " + plot[j]);
+            Debug.Log("Checking between points: " + plot[j] + " and " + plot[l]);
 
             float b = midPoint.y - invSlope * midPoint.x;
             location = locationToLine(invSlope, b, plot[l], midPoint.x);
-            //Debug.Log("trend is: " + trend + " and location is: " + location);
+            Debug.Log("trend is: " + trend + " and location is: " + location);
             if (trend == -1)
             {
                 trend = location;
             }
             else if(trend != location)
             {
+                Debug.Log("Crosses bisector line");
                 plotIntersection.Add(j);
                 plotIntersection.Add(l);
                 return plotIntersection;
@@ -283,11 +288,11 @@ public class CellFill : MonoBehaviour {
     // If the slope is infinite (vertical line) uses the x values to determine if point is right or left of line
     public int locationToLine(float m, float b, Vector2f p, float midPointX)
     {
-        //Debug.Log("Equation of line is: y = " + m + "x + " + b);
+        Debug.Log("Equation of line is: y = " + m + "x + " + b);
         float resultY;
         if (double.IsInfinity(m))
         {
-          //  Debug.Log("b is infinity");
+            Debug.Log("b is infinity");
             if (midPointX < p.x)
             {
                 return 0;
