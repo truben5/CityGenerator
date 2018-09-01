@@ -12,7 +12,6 @@ public class StructureLine {
     {
         _start = new Vector3(start.x, start.y, 0);
         _end = new Vector3(end.x, end.y, 0);
-        setLength(start,end);
     }
 
     public Vector3 getStart()
@@ -24,16 +23,4 @@ public class StructureLine {
     {
         return _end;
     }
-
-    public void setLength(Vector2f start, Vector2f end)
-    {
-        float x = Mathf.Abs(end.x - start.x);
-        float y = Mathf.Abs(end.y - start.y);
-        length = Mathf.Sqrt(x * x + y * y);
-    }
-
-    public float getLength()
-    {
-        return length;
-    } 
 }

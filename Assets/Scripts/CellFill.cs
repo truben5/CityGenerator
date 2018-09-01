@@ -6,35 +6,58 @@ public class CellFill : MonoBehaviour {
 
     //List<Vector2f> shapeToFill = new List<Vector2f>();
     private List<List<Vector2f>> buildings = new List<List<Vector2f>>();
+    private List<StructureLine> buildingLines = new List<StructureLine>();
     // to debug
     //private List<StructureLine> buildingLines = new List<StructureLine>();
 
     // Checks if any sides of plot are longer than max length. If so splits the polygon
     // until all sides are smaller or equal to max length
-    public void MakeBuildings(List<Vector2f> cellPlot, int maxLength)
+    public void MakeBuildings(List<List<Vector2f>> cellPlot, int maxLength)
     {
-        buildings.Add(cellPlot);
-
+        Debug.Log("Starting MakeBuildings");
+        cellPlot = MakeBuildingShapes(cellPlot, maxLength);
         for (int i=0; i < cellPlot.Count; i++)
         {
-            int j = i + 1;
-            if (j > cellPlot.Count - 1)
+            for (int j = 0; j < cellPlot[i].Count; j++)
             {
-                j = 0;
-            }
-            float dist = Distance(cellPlot[i].x, cellPlot[i].y, cellPlot[j].x, cellPlot[j].y);
-            if (dist > maxLength)
-            {
-                Debug.Log("Line Segment between " + i + " and " + j + " is " + dist);
-                buildings = BisectCell(buildings, maxLength, 0, i, j);
+                int k = j + 1;
+                if (k > cellPlot.Count - 1)
+                {
+                    k = 0;
+                }
+                StructureLine line = new StructureLine(cellPlot[i][j], cellPlot[i][k]);
+                buildingLines.Add(line);
             }
         }
+        
     }
 
-    private List<List<Vector2f>> BisectCell(List<List<Vector2f>> buildings, int maxLength,
+    public List<List<Vector2f>> MakeBuildingShapes(List<List<Vector2f>> cellPlot, int maxLength)
+    {
+        for (int i = 0; i < cellPlot.Count; i++)
+            for (int j = 0; j < cellPlot[i].Count; j++)
+            {
+                int k = j + 1;
+                if (k > cellPlot[i].Count - 1)
+                {
+                    k = 0;
+                }
+                if (TooBig(cellPlot[i][j], cellPlot[i][k], maxLength))
+                {
+                    cellPlot = BisectCell(cellPlot[i], maxLength, 0, j, k);
+
+                    //Recursive Call
+                    cellPlot = MakeBuildingShapes(cellPlot, maxLength);
+                 
+                }
+            }
+        return cellPlot;
+    }
+
+    private List<List<Vector2f>> BisectCell(List<Vector2f> buildingShapes, int maxLength,
         int plotInd, int segStartInd, int segEndInd)
     {
-        List<Vector2f> myPlot = buildings[plotInd];
+        List<Vector2f> myPlot = buildingShapes;
 
         float slope = Slope(myPlot[segStartInd].x, myPlot[segStartInd].y, myPlot[segEndInd].x,
             myPlot[segEndInd].y);
@@ -47,114 +70,99 @@ public class CellFill : MonoBehaviour {
         Vector2f nextLinePoint;
         if (double.IsInfinity(invSlope))
         {
-            Debug.Log("infinity is invslope");
+            //Debug.Log("infinity is invslope");
             nextLinePoint = new Vector2f(midPoint.x, midPoint.y + 1);
         }
         else
         {
-            Debug.Log("Next point of bisector is: midPoint.x + 1, midPoint.y + " + invSlope);
+            //Debug.Log("Next point of bisector is: midPoint.x + 1, midPoint.y + " + invSlope);
             nextLinePoint = new Vector2f(midPoint.x + 1, midPoint.y + invSlope);
         }
-        List<Vector2f> intersectingSeg = LineIntersection(segEndInd, midPoint, invSlope, myPlot);
-        Debug.Log("Next line point:" + nextLinePoint.x + " " + nextLinePoint.y);
+        List<int> intersectingSeg = LineIntersection(segEndInd, midPoint, invSlope, myPlot);
+        //Debug.Log("Next line point:" + nextLinePoint.x + " " + nextLinePoint.y);
         //Debug.Log("line segment intersected:" + intersectingSeg[0] + " " +  intersectingSeg[1]);
-        StructureLine wall;
-        if(intersectingSeg.Count == 1)
+        //StructureLine wall;
+        bool intersectIsVertex = false;
+        Vector2f intersection;
+        if (intersectingSeg.Count == 1)
         {
-            wall = new StructureLine(midPoint, intersectingSeg[0]);
+            //wall = new StructureLine(midPoint, myPlot[intersectingSeg[0]]);
+            intersection = myPlot[intersectingSeg[0]];
+            intersectIsVertex = true;
         }
         else
         {
-            Vector2f intersection = Intersection(midPoint, nextLinePoint, intersectingSeg[0], 
-           intersectingSeg[1]);
+            intersection = Intersection(midPoint, nextLinePoint, myPlot[intersectingSeg[0]], 
+            myPlot[intersectingSeg[1]]);
 
             //wall = new StructureLine(midPoint, intersection);
         }
-        
 
+        List<List<Vector2f>> resultShapes = SplitPlotArray(buildingShapes, midPoint, segStartInd, intersection, intersectingSeg[0], intersectIsVertex);
+
+        //buildings.Add(wall);
         //buildingLines.Add(wall);
 
-
-        return buildings;
+        return resultShapes;
 
     }
 
     // Splits array of vertices into two separate arrays representing individual buildings. Splits along perpendicular bisector
-    public List<List<Vector2f>> splitPlotArray(List<Vector2f> building, Vector2f bisector, int bisectorInd, Vector2f intersection, int intersectionInd, bool intersectIsVertex)
+    public List<List<Vector2f>> SplitPlotArray(List<Vector2f> vertices, Vector2f bisector, int bisectorInd, Vector2f intersection, int intersectionInd, bool intersectIsVertex)
     {
         List<List<Vector2f>> newBuildings = new List<List<Vector2f>>();
         List<Vector2f> plot1 = new List<Vector2f>();
         List<Vector2f> plot2 = new List<Vector2f>();
         bool first = true;
-        for (int i = 0; i < building.Count; i++)
+        for (int i = 0; i < vertices.Count; i++)
         {
-            if (i < bisectorInd && first)
+            //Debug.Log("vertex list is: " + vertices[i]);
+            if (i == intersectionInd && intersectIsVertex)
             {
-                plot1.Add(building[i]);
+                plot2.Add(vertices[i]);
+                plot2.Add(bisector);
+                plot1.Add(vertices[i]);
             }
-            else if (i > bisectorInd && !first)
-            {
-                plot2.Add(building[i]);
-            }
-            else if (i == bisectorInd )
-            {
-                plot1.Add(building[i]);
-                first = false;
-            }
+
             else if (i == intersectionInd && !intersectIsVertex)
             {
-                plot2.Add(building[i]);
+                plot2.Add(vertices[i]);
+                plot2.Add(intersection);
+                plot2.Add(bisector);
+                plot1.Add(intersection);
                 first = true;
             }
-            else if (i == intersectionInd && intersectIsVertex)
-            {
 
+            else if (i == bisectorInd)
+            {
+                plot1.Add(vertices[i]);
+                plot1.Add(bisector);
+                first = false;
             }
 
+            else if (first && i != bisectorInd)
+            {
+                plot1.Add(vertices[i]);
+            }
+            else if (!first && i != bisectorInd && i != intersectionInd )
+            {
+                plot2.Add(vertices[i]);
+            }
+
+        }
+        //for debugging
+        for (int i = 0; i < plot1.Count; i++)
+            {
+                Debug.Log("plot1 ind " + i + " is: " + plot1[i]);
+            }
+        for (int j = 0; j < plot2.Count; j++)
+        {
+            Debug.Log("Plot2 ind " + j + " is " + plot2[j]);
         }
         newBuildings.Add(plot1);
         newBuildings.Add(plot2);
         return newBuildings;
     }
-
-    //private float largestDist = 0;
-
-    //// Finds largest distance between two vertices of cell and returns those vectors
-    //public List<Vector2f> LargestLineSegment(List<Vector2f> cellVertices)
-    //public List<Vector2f> LargestLineSegment(List<Vector2f> cellVertices)
-    //{
-    //    List<Vector2f> largestSegment = new List<Vector2f>();
-
-    //    Vector2f largestStart = new Vector2f();
-    //    Vector2f largestEnd = new Vector2f();
-
-    //    for (int i = 0; i < cellVertices.Count; i++)
-    //    {
-    //        int z = i + 1;
-    //        if (z > cellVertices.Count - 1)
-    //        {
-    //            z = 0;
-    //        }
-
-    //        Vector2f start = cellVertices[i];
-    //        Vector2f end = cellVertices[z];
-
-    //        float d = Distance(start.x, start.y, end.x, end.y);
-
-    //        if(d > largestDist)
-    //        {
-    //            largestStart = start;
-    //            largestEnd = end;
-    //            largestDist = d;
-    //        }
-    //    }
-
-    //    largestSegment.Add(largestStart);
-    //    largestSegment.Add(largestEnd);
-
-    //    return largestSegment;
-
-    //}
 
     // Calculates distance between two points
     public float Distance(float x1, float y1, float x2, float y2)
@@ -163,6 +171,17 @@ public class CellFill : MonoBehaviour {
         float y = Mathf.Abs(y2 - y1);
         float dist = Mathf.Sqrt(x * x + y * y);
         return dist;
+    }
+
+    public bool TooBig(Vector2f start, Vector2f end, int maxLength)
+    {
+        float dist = Distance(start.x, start.y, end.x, end.y);
+        Debug.Log("Distance is: " + dist);
+        if (dist > maxLength)
+        {
+            return true;
+        }
+        return false;
     }
 
     // Calculates midpoint between two points
@@ -190,55 +209,50 @@ public class CellFill : MonoBehaviour {
     }
 
     // For the line segment the bisector intersects, it returns the indices of those vertices
-    public List<Vector2f> LineIntersection(int startInd,Vector2f midPoint, float invSlope, List<Vector2f> plot)
+    public List<int> LineIntersection(int startInd,Vector2f midPoint, float invSlope, List<Vector2f> plot)
     {
-        List<Vector2f> plotIntersection = new List<Vector2f>();
+        List<int> plotIntersection = new List<int>();
 
         //float segmentAngle = Mathf.Rad2Deg * Mathf.Atan(slope);
-        Debug.Log("In LineIntersection invSlope is: " + invSlope);
+        //Debug.Log("In LineIntersection invSlope is: " + invSlope);
         int trend = -1;
         int location = -1;
         for (int i = startInd; i < plot.Count + startInd; i++)
         {
             int l = (i + 1) % plot.Count;
-            Debug.Log("l = " + l);
+            //Debug.Log("l = " + l);
             int j = (i) % plot.Count;
-            Debug.Log("Checking between points: " + plot[l] + " and " + plot[j]);
+            //Debug.Log("Checking between points: " + plot[l] + " and " + plot[j]);
 
             float b = midPoint.y - invSlope * midPoint.x;
             location = locationToLine(invSlope, b, plot[l], midPoint.x);
-            Debug.Log("trend is: " + trend + " and location is: " + location);
+            //Debug.Log("trend is: " + trend + " and location is: " + location);
             if (trend == -1)
             {
                 trend = location;
             }
             else if(trend != location)
             {
-                plotIntersection.Add(plot[l]);
-                plotIntersection.Add(plot[j]);
+                plotIntersection.Add(j);
+                plotIntersection.Add(l);
                 return plotIntersection;
             }
             else if(trend == 2)
             {
-                plotIntersection.Add(plot[l]);
+                plotIntersection.Add(j);
                 return plotIntersection;
             }
             
-            Debug.Log("Trend and location are: " + trend + " and " + location);
+            //Debug.Log("Trend and location are: " + trend + " and " + location);
         }
-
-        //if (plotIntersection.Count != 2)
-        //{
-        //    throw new System.Exception("No intersecting line for bisector, location of point was: " + location + " and trend was " + trend);
-        //}
         return plotIntersection;
     }
 
     // Finds point of intersection two lines
     public Vector2f Intersection(Vector2f s1, Vector2f e1, Vector2f s2, Vector2f e2)
     {
-        Debug.Log("intersection of: " + s1 + " and " + e1 + " with " + 
-            s2 + " and " + e2);
+        //Debug.Log("intersection of: " + s1 + " and " + e1 + " with " + 
+          //  s2 + " and " + e2);
 
         // Line represented as a1x + b1y = c1
         float a1 = e1.y - s1.y;
@@ -250,7 +264,7 @@ public class CellFill : MonoBehaviour {
         float b2 = s2.x - e2.x;
         float c2 = a2 * s2.x + b2 * s2.y;
 
-        Debug.Log("a1: " + a1 + " b1: " + b1 + " c1: " + c1 + " a2: " + a2 + " b2: " + b2 + " c2: " + c2);
+        //Debug.Log("a1: " + a1 + " b1: " + b1 + " c1: " + c1 + " a2: " + a2 + " b2: " + b2 + " c2: " + c2);
 
         float determinant = a1 * b2 - a2 * b1;
 
@@ -269,11 +283,11 @@ public class CellFill : MonoBehaviour {
     // If the slope is infinite (vertical line) uses the x values to determine if point is right or left of line
     public int locationToLine(float m, float b, Vector2f p, float midPointX)
     {
-        Debug.Log("Equation of line is: y = " + m + "x + " + b);
+        //Debug.Log("Equation of line is: y = " + m + "x + " + b);
         float resultY;
         if (double.IsInfinity(m))
         {
-            Debug.Log("b is infinity");
+          //  Debug.Log("b is infinity");
             if (midPointX < p.x)
             {
                 return 0;
@@ -313,15 +327,14 @@ public class CellFill : MonoBehaviour {
         }
     }
 
-    //void OnDrawGizmos()
-    //{
-    //    //Debug.Log(buildingVertices);
-    //    Gizmos.color = Color.red;
-    //    for (int i = 0; i < buildingLines.Count; i++)
-    //    {
-    //        Gizmos.DrawLine(buildingLines[i].getStart(), buildingLines[i].getEnd());
-
-    //    }
-    //}
+    void OnDrawGizmos()
+    {
+        //Debug.Log(buildingVertices);
+        Gizmos.color = Color.red;
+        for (int i = 0; i < buildingLines.Count; i++)
+        {
+            Gizmos.DrawLine(buildingLines[i].getStart(), buildingLines[i].getEnd());
+        }
+    }
 }
 

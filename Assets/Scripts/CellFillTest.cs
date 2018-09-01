@@ -5,6 +5,10 @@ using UnityEngine;
 public class CellFillTest : MonoBehaviour {
 
     public GameObject voronoiCell;
+    private List<Vector2f> plot1 = new List<Vector2f>();
+    private List<Vector2f> plot2 = new List<Vector2f>();
+    private Vector2f midPoint;
+    private Vector2f intersection;
 
     // Use this for initialization
     void Start()
@@ -15,7 +19,10 @@ public class CellFillTest : MonoBehaviour {
         IntersectionTests();
         Debug.Log("Testing LineIntersection Function");
         LineIntersectionTests();
-
+        Debug.Log("Testing SpltPlotArray Function");
+        SplitPlotArrayTest();
+        Debug.Log("Testing Make Building Shapes");
+        MakeBuidlingShapes();
     }
 
     public void IntersectionTests()
@@ -69,43 +76,47 @@ public class CellFillTest : MonoBehaviour {
 
     public void LineIntersectionTests()
     {
-        List<Vector2f> plot = new List<Vector2f>();
-        plot.Add(new Vector2f(10, 40));
-        plot.Add(new Vector2f(10,30));
-        plot.Add(new Vector2f(20, 20));
-        plot.Add(new Vector2f(30,40));
+        plot1 = new List<Vector2f>();
+        plot1.Add(new Vector2f(10, 40));
+        plot1.Add(new Vector2f(10,30));
+        plot1.Add(new Vector2f(20, 20));
+        plot1.Add(new Vector2f(30,40));
 
         Debug.Log("Test 1");
         // Slope between (20,20) and (30,40)
-        float slope = voronoiCell.GetComponent<CellFill>().Slope(plot[2].x, plot[2].y, plot[3].x, plot[3].y);
+        float slope = voronoiCell.GetComponent<CellFill>().Slope(plot1[2].x, plot1[2].y, plot1[3].x, plot1[3].y);
         Debug.Log(slope);
         float invSlope = voronoiCell.GetComponent<CellFill>().InvSlope(slope);
-        Vector2f midPoint = voronoiCell.GetComponent<CellFill>().Midpoint(plot[2].x, plot[2].y, plot[3].x, plot[3].y);
+        midPoint = voronoiCell.GetComponent<CellFill>().Midpoint(plot1[2].x, plot1[2].y, plot1[3].x, plot1[3].y);
         Debug.Log(invSlope);
-        List<Vector2f> lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(3, midPoint, invSlope, plot);
-        if (lineSeg[0] != plot[1] || lineSeg[1] != plot[0])
+        List<int> lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(3, midPoint, invSlope, plot1);
+        if (lineSeg[0] != 0 || lineSeg[1] != 1)
         {
-            throw new System.Exception("Extpected (10,40) and (10,30) but received " + lineSeg[1] + " and " + lineSeg[0]);
+            throw new System.Exception("Extpected (10,40) and (10,30) but received " + lineSeg[0] + " and " + lineSeg[1]);
         }
 
         Debug.Log("Test 2");
         // Slope between (10,40) and (10,30)
-        slope = voronoiCell.GetComponent<CellFill>().Slope(plot[0].x, plot[0].y, plot[1].x, plot[1].y);
+        slope = voronoiCell.GetComponent<CellFill>().Slope(plot1[0].x, plot1[0].y, plot1[1].x, plot1[1].y);
         invSlope = voronoiCell.GetComponent<CellFill>().InvSlope(slope);
-        midPoint = voronoiCell.GetComponent<CellFill>().Midpoint(plot[0].x,plot[0].y, plot[1].x, plot[1].y);
-        // Line segment bisector intersects with
-        lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(1, midPoint, invSlope, plot);
-        if (lineSeg[1] != plot[2] || lineSeg[0] != plot[3])
+        midPoint = voronoiCell.GetComponent<CellFill>().Midpoint(plot1[0].x,plot1[0].y, plot1[1].x, plot1[1].y);
+        if (midPoint.x != 10 || midPoint.y != 35)
         {
-            throw new System.Exception("Extpected (20,20) and (30,40) but received " + lineSeg[1] + " and " + lineSeg[0]);
+            throw new System.Exception("Incorrect Midpoint");
+        }
+        // Line segment bisector intersects with
+        lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(1, midPoint, invSlope, plot1);
+        if (lineSeg[0] != 2 || lineSeg[1] != 3)
+        {
+            throw new System.Exception("Extpected intersection between (20,20) and (30,40) but received " + lineSeg[0] + " and " + lineSeg[1]);
         }
 
         Vector2f nextPoint = new Vector2f(midPoint.x + 1, midPoint.y + invSlope);
         // Point of intersection between bisector and line segment
-        Vector2f intersection = voronoiCell.GetComponent<CellFill>().Intersection(midPoint, nextPoint, lineSeg[0], lineSeg[1]);
+        intersection = voronoiCell.GetComponent<CellFill>().Intersection(midPoint, nextPoint, plot1[lineSeg[0]], plot1[lineSeg[1]]);
         if (intersection.x != 27.5 || intersection.y != 35)
         {
-            throw new System.Exception("Extpected (27.5,35) but received " + intersection.x + ", " + intersection.y);
+            throw new System.Exception("Extpected intersection to be (27.5,35) but received " + intersection.x + ", " + intersection.y);
         }
 
         //Debug.Log("Test 3");
@@ -121,6 +132,58 @@ public class CellFillTest : MonoBehaviour {
         //{
         //    throw new System.Exception("Extpected (20,20) and (30,40) but received " + lineSeg[1] + " and " + lineSeg[0]);
         //}
+    }
+
+    public void SplitPlotArrayTest()
+    {
+        Debug.Log("Test 1");
+        List<List<Vector2f>> newShapes = voronoiCell.GetComponent<CellFill>().SplitPlotArray(plot1, midPoint, 0, intersection, 2, false);
+
+
+        if (newShapes[0].Count != 4 || newShapes[1].Count != 4)
+        {
+            throw new System.Exception("Expected plot 1 and plot 2 to have 4 vertices each but 1: " + newShapes[0].Count + " and 2: " + newShapes[1].Count);
+        }
+        if (newShapes[0][0] != plot1[0] || newShapes[0][1] != midPoint || newShapes[0][2] != intersection || newShapes[0][3] != plot1[3])
+        {
+            throw new System.Exception("Error in vertices for new plot 1");
+        }
+        if (newShapes[1][0] != plot1[1] || newShapes[1][1] != plot1[2] || newShapes[1][2] != intersection || newShapes[1][3] != midPoint)
+        {
+            throw new System.Exception("Error in vertices for new plot 2");
+        }
+
+        Debug.Log("Test 2");
+        newShapes.Clear();
+        plot2.Add(new Vector2f(10,30));
+        plot2.Add(new Vector2f(10,10));
+        plot2.Add(new Vector2f(20,20));
+        midPoint = new Vector2f(10,20);
+        intersection = new Vector2f(20,20);
+
+        newShapes = voronoiCell.GetComponent<CellFill>().SplitPlotArray(plot2, midPoint, 0, intersection, 2, true);
+
+        if (newShapes[0].Count != 3 || newShapes[1].Count != 3)
+        {
+            throw new System.Exception("Expected plot 1 and plot 2 to have 3 vertices each but 1: " + newShapes[0].Count + " and 2: " + newShapes[1].Count);
+        }
+
+        if (newShapes[0][0] != plot2[0] || newShapes[0][1] != midPoint || newShapes[0][2] != plot2[2])
+        {
+            throw new System.Exception("Error in vertices for new plot 1");
+        }
+        if (newShapes[1][0] != plot2[1] || newShapes[1][1] != plot2[2] || newShapes[1][2] != midPoint)
+        {
+            throw new System.Exception("Error in vertices for new plot 2");
+        }
+    }
+
+    public void MakeBuidlingShapes()
+    {
+        List<List<Vector2f>> newShapes = new List<List<Vector2f>>();
+        newShapes.Add(plot1);
+
+        newShapes = voronoiCell.GetComponent<CellFill>().MakeBuildingShapes(newShapes, 5);
     }
 
 }

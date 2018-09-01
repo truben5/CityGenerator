@@ -17,8 +17,8 @@ public class VoronoiGenerator : MonoBehaviour {
     void Start()
     {
         GenerateVoronoi();
-        AddBuildings();
-        //voronoiCell.GetComponent<CellFillTest>();
+        //AddBuildings();
+        voronoiCell.GetComponent<CellFillTest>();
 
     }
 
@@ -38,8 +38,6 @@ public class VoronoiGenerator : MonoBehaviour {
             //Debug.Log(this.cells);
             cells.Add(voronoiCell);
         }
-
-        //Debug.Log(voronoiCell.GetComponent<MakeVoronoiCell>().getCellVertices());
     }
 
     // Randomly creates a 2d vector in range of length and width
@@ -56,14 +54,16 @@ public class VoronoiGenerator : MonoBehaviour {
     // Makes buildings in cells
     private void AddBuildings()
     {
+        // Change back to cells.Count after testing
         for (int i=0; i < cells.Count; i++)
         {
-            List<Vector2f> cellVertices = cells[i].GetComponent<VoronoiCell>().getCellVertices();
-            for (int j=0; j < cellVertices.Count; j++)
-            {
-                Debug.Log("Cell " + i + ": " + cellVertices[j].x + ", " + cellVertices[j].y);
-            }
-            cells[i].GetComponent<CellFill>().MakeBuildings(cellVertices, maxLength);
+            List<List<Vector2f>> cellBuildings = new List<List<Vector2f>>();
+            cellBuildings.Add(cells[i].GetComponent<VoronoiCell>().getCellVertices());
+            //for (int j=0; j < cellVertices.Count; j++)
+            //{
+            //    Debug.Log("Cell " + i + ": " + cellVertices[j].x + ", " + cellVertices[j].y);
+            //}
+            cells[i].GetComponent<CellFill>().MakeBuildings(cellBuildings, maxLength);
         }
     }
 
