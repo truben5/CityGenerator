@@ -20,11 +20,8 @@ public class CellFill : MonoBehaviour {
         {
             for (int j = 0; j < cellPlot[i].Count; j++)
             {
-                int k = j + 1;
-                if (k > cellPlot.Count - 1)
-                {
-                    k = 0;
-                }
+                int k = (j + 1) % cellPlot[i].Count;
+                Debug.Log("i = " + i + " j = " + j + " k = " + k);
                 StructureLine line = new StructureLine(cellPlot[i][j], cellPlot[i][k]);
                 buildingLines.Add(line);
             }
@@ -37,13 +34,12 @@ public class CellFill : MonoBehaviour {
         for (int i = ptr; i < cellPlot.Count; i++)
             for (int j = 0; j < cellPlot[i].Count; j++)
             {
-                int k = j + 1;
-                if (k > cellPlot[i].Count - 1)
-                {
-                    k = 0;
-                }
+                int k = (j + 1) % cellPlot[i].Count;
+                
                 if (TooBig(cellPlot[i][j], cellPlot[i][k], maxLength))
                 {
+                    Debug.Log("Too big");
+                    Debug.Log("j = " + j + " k = " + k);
                     List<List<Vector2f>> splitPlot = BisectCell(cellPlot[i], maxLength, 0, j, k);
                     cellPlot[i] = splitPlot[0];
                     cellPlot.Insert(i+1, splitPlot[1]);
@@ -81,7 +77,7 @@ public class CellFill : MonoBehaviour {
         }
         List<int> intersectingSeg = LineIntersection(segEndInd, midPoint, invSlope, myPlot);
         //Debug.Log("Next line point:" + nextLinePoint.x + " " + nextLinePoint.y);
-        Debug.Log("line segment intersected:" + intersectingSeg[0] + " " +  intersectingSeg[1]);
+        //Debug.Log("line segment intersected:" + intersectingSeg[0] + " " +  intersectingSeg[1]);
         //StructureLine wall;
         bool intersectIsVertex = false;
         Vector2f intersection;
@@ -235,20 +231,25 @@ public class CellFill : MonoBehaviour {
             {
                 trend = location;
             }
+            else if (trend == 2)
+            {
+                plotIntersection.Add(j);
+                return plotIntersection;
+            }
             else if(trend != location)
             {
+                if (location == 2)
+                {
+                    plotIntersection.Add(l);
+                    return plotIntersection;
+                }
                 Debug.Log("Crosses bisector line");
                 plotIntersection.Add(j);
                 plotIntersection.Add(l);
                 return plotIntersection;
             }
-            else if(trend == 2)
-            {
-                plotIntersection.Add(j);
-                return plotIntersection;
-            }
-            
-            //Debug.Log("Trend and location are: " + trend + " and " + location);
+            trend = location;
+            Debug.Log("Trend and location are: " + trend + " and " + location);
         }
         return plotIntersection;
     }

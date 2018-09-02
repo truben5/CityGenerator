@@ -9,6 +9,7 @@ public class CellFillTest : MonoBehaviour {
     private List<Vector2f> plot2 = new List<Vector2f>();
     private Vector2f midPoint;
     private Vector2f intersection;
+    private List<List<Vector2f>> newShapes = new List<List<Vector2f>>();
 
     // Use this for initialization
     void Start()
@@ -114,16 +115,16 @@ public class CellFillTest : MonoBehaviour {
         midPoint = voronoiCell.GetComponent<CellFill>().Midpoint(plot1[1].x, plot1[1].y, plot1[2].x, plot1[2].y);
 
         lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(2, midPoint, invSlope, plot1);
-        if (lineSeg[0] != 2 || lineSeg[1] != 3)
+        if (lineSeg.Count > 1 || lineSeg[0] != 3)
         {
             throw new System.Exception("Extpected intersection between (20,20) and (30,40) but received " + lineSeg[0] + " and " + lineSeg[1]);
         }
-        nextPoint = new Vector2f(midPoint.x + 1, midPoint.y + invSlope);
-        intersection = voronoiCell.GetComponent<CellFill>().Intersection(midPoint, nextPoint, plot1[lineSeg[0]], plot1[lineSeg[1]]);
-        if (intersection.x != 30 || intersection.y != 40)
-        {
-            throw new System.Exception("Extpected intersection to be (30,40) but received " + intersection.x + ", " + intersection.y);
-        }
+        //nextPoint = new Vector2f(midPoint.x + 1, midPoint.y + invSlope);
+        //intersection = voronoiCell.GetComponent<CellFill>().Intersection(midPoint, nextPoint, plot1[lineSeg[0]], plot1[lineSeg[1]]);
+        //if (intersection.x != 30 || intersection.y != 40)
+        //{
+        //    throw new System.Exception("Extpected intersection to be (30,40) but received " + intersection.x + ", " + intersection.y);
+        //}
 
 
         Debug.Log("Test 3");
@@ -147,8 +148,8 @@ public class CellFillTest : MonoBehaviour {
         invSlope = voronoiCell.GetComponent<CellFill>().InvSlope(slope);
         midPoint = voronoiCell.GetComponent<CellFill>().Midpoint(plot1[3].x, plot1[3].y, plot1[0].x, plot1[0].y);
         lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(0, midPoint, invSlope, plot1);
-        Debug.Log("count = " + lineSeg.Count);
-        if (lineSeg.Count > 1 && lineSeg[0] != 2)
+        Debug.Log(lineSeg[0]);
+        if (lineSeg.Count > 1 || lineSeg[0] != 2)
         {
             throw new System.Exception("Extpected (20,20) and (30,40) but received " + lineSeg[0] + " and " + lineSeg[1]);
         }
@@ -201,10 +202,32 @@ public class CellFillTest : MonoBehaviour {
 
     public void MakeBuidlingShapes()
     {
-        List<List<Vector2f>> newShapes = new List<List<Vector2f>>();
         newShapes.Add(plot1);
 
         newShapes = voronoiCell.GetComponent<CellFill>().MakeBuildingShapes(newShapes, 5, 0);
     }
 
+    //void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.black;
+    //    for (int i = 0; i < plot1.Count; i++)
+    //    {
+    //        int j = (i + 1) % plot1.Count;
+    //        Vector3 startVector = new Vector3(plot1[i].x, plot1[i].y, 0);
+    //        Vector3 endVector = new Vector3(plot1[j].x, plot1[j].y, 0);
+    //        Gizmos.DrawLine(startVector, endVector);
+    //    }
+
+    //    Gizmos.color = Color.black;
+    //    for (int i = 0; i < newShapes.Count; i++)
+    //    {
+    //        for (int j = 0; j < newShapes[i].Count; j++)
+    //        {
+    //            int k = (j + 1) % newShapes[i].Count;
+    //            Vector3 startVector = new Vector3(newShapes[i][j].x, newShapes[i][j].y, 0);
+    //            Vector3 endVector = new Vector3(newShapes[i][k].x, newShapes[i][k].y, 0);
+    //            Gizmos.DrawLine(startVector, endVector);
+    //        }
+    //    }
+    //}
 }
