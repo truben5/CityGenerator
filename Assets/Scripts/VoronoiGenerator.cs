@@ -17,8 +17,8 @@ public class VoronoiGenerator : MonoBehaviour {
     void Start()
     {
         GenerateVoronoi();
-        AddBuildings();
-        //voronoiCell.GetComponent<CellFillTest>();
+        //AddBuildings();
+        voronoiCell.GetComponent<CellFillTest>();
 
     }
 
@@ -68,23 +68,23 @@ public class VoronoiGenerator : MonoBehaviour {
     }
 
     //Draws gizmos
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.black;
-        for (int i = 0; i < cells.Count; i++)
-        {
-            List<Vector2f> cellVertices = cells[i].GetComponent<VoronoiCell>().getCellVertices();
+    //void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.black;
+    //    for (int i = 0; i < cells.Count; i++)
+    //    {
+    //        List<Vector2f> cellVertices = cells[i].GetComponent<VoronoiCell>().getCellVertices();
 
-            for (int j = 0; j < cellVertices.Count; j++)
-            {
-                int z = (j + 1) % cellVertices.Count;
+    //        for (int j = 0; j < cellVertices.Count; j++)
+    //        {
+    //            int z = (j + 1) % cellVertices.Count;
 
-                Vector3 startVector = new Vector3(cellVertices[j].x, cellVertices[j].y, 0);
-                Vector3 endVector = new Vector3(cellVertices[z].x, cellVertices[z].y, 0);
-                Gizmos.DrawLine(startVector, endVector);
-            }
+    //            Vector3 startVector = new Vector3(cellVertices[j].x, cellVertices[j].y, 0);
+    //            Vector3 endVector = new Vector3(cellVertices[z].x, cellVertices[z].y, 0);
+    //            Gizmos.DrawLine(startVector, endVector);
+    //        }
 
-        }
-    }
+    //    }
+    //  }
 
 }

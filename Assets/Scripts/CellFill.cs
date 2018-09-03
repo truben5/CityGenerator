@@ -21,7 +21,7 @@ public class CellFill : MonoBehaviour {
             for (int j = 0; j < cellPlot[i].Count; j++)
             {
                 int k = (j + 1) % cellPlot[i].Count;
-                Debug.Log("i = " + i + " j = " + j + " k = " + k);
+                //Debug.Log("i = " + i + " j = " + j + " k = " + k);
                 StructureLine line = new StructureLine(cellPlot[i][j], cellPlot[i][k]);
                 buildingLines.Add(line);
             }
@@ -35,11 +35,11 @@ public class CellFill : MonoBehaviour {
             for (int j = 0; j < cellPlot[i].Count; j++)
             {
                 int k = (j + 1) % cellPlot[i].Count;
-                
+                Debug.Log("Distance between " + cellPlot[i][j] + " and " + cellPlot[i][k]);
                 if (TooBig(cellPlot[i][j], cellPlot[i][k], maxLength))
                 {
                     Debug.Log("Too big");
-                    Debug.Log("j = " + j + " k = " + k);
+                    //Debug.Log("j = " + j + " k = " + k);
                     List<List<Vector2f>> splitPlot = BisectCell(cellPlot[i], maxLength, 0, j, k);
                     cellPlot[i] = splitPlot[0];
                     cellPlot.Insert(i+1, splitPlot[1]);
@@ -220,23 +220,24 @@ public class CellFill : MonoBehaviour {
         for (int i = startInd; i < plot.Count + startInd; i++)
         {
             int l = (i + 1) % plot.Count;
-            Debug.Log("l = " + l);
+            //Debug.Log("l = " + l);
             int j = (i) % plot.Count;
-            Debug.Log("Checking between points: " + plot[j] + " and " + plot[l]);
+            Debug.Log("Checking between midpoint: " + midPoint + " and vertex: " + plot[l]);
 
             float b = midPoint.y - invSlope * midPoint.x;
-            location = locationToLine(invSlope, b, plot[l], midPoint.x);
             Debug.Log("trend is: " + trend + " and location is: " + location);
-            if (trend == -1)
-            {
-                trend = location;
-            }
-            else if (trend == 2)
+            trend = location;
+            location = locationToLine(invSlope, b, plot[l], midPoint.x);
+            //  if (trend == -1)
+            //  {
+            //      trend = location;
+            //  }
+            if (trend == 2)
             {
                 plotIntersection.Add(j);
                 return plotIntersection;
             }
-            else if(trend != location)
+            else if(trend != location && trend != -1)
             {
                 if (location == 2)
                 {
@@ -248,9 +249,10 @@ public class CellFill : MonoBehaviour {
                 plotIntersection.Add(l);
                 return plotIntersection;
             }
-            trend = location;
-            Debug.Log("Trend and location are: " + trend + " and " + location);
+            //trend = location;
+            Debug.Log("Trend and location are now: " + trend + " and " + location);
         }
+        Debug.Log("Returning nothing");
         return plotIntersection;
     }
 
@@ -293,7 +295,7 @@ public class CellFill : MonoBehaviour {
         float resultY;
         if (double.IsInfinity(m))
         {
-            Debug.Log("b is infinity");
+            //Debug.Log("b is infinity");
             if (midPointX < p.x)
             {
                 return 0;
