@@ -75,7 +75,7 @@ public class CellFill : MonoBehaviour {
             //Debug.Log("Next point of bisector is: midPoint.x + 1, midPoint.y + " + invSlope);
             nextLinePoint = new Vector2f(midPoint.x + 1, midPoint.y + invSlope);
         }
-        List<int> intersectingSeg = LineIntersection(segEndInd, midPoint, invSlope, myPlot);
+        List<int> intersectingSeg = LineIntersection(segStartInd, midPoint, invSlope, myPlot);
         //Debug.Log("Next line point:" + nextLinePoint.x + " " + nextLinePoint.y);
         //Debug.Log("line segment intersected:" + intersectingSeg[0] + " " +  intersectingSeg[1]);
         //StructureLine wall;
@@ -111,38 +111,59 @@ public class CellFill : MonoBehaviour {
         List<Vector2f> plot1 = new List<Vector2f>();
         List<Vector2f> plot2 = new List<Vector2f>();
         bool first = true;
+        Debug.Log("splitting plot");
         for (int i = 0; i < vertices.Count; i++)
         {
             //Debug.Log("vertex list is: " + vertices[i]);
             if (i == intersectionInd && intersectIsVertex)
             {
+                Debug.Log("Type1");
                 plot2.Add(vertices[i]);
                 plot2.Add(bisector);
                 plot1.Add(vertices[i]);
             }
 
+            //  && first == false
             else if (i == intersectionInd && !intersectIsVertex)
             {
+                Debug.Log("Type2");
                 plot2.Add(vertices[i]);
                 plot2.Add(intersection);
                 plot2.Add(bisector);
                 plot1.Add(intersection);
                 first = true;
             }
+            // Something with this case??
+            //else if (i == intersectionInd && !intersectIsVertex && first == true)
+            //{
+            //    plot1.Add(vertices[i]);
+            //    plot1.Add(intersection);
+            //    plot2.Add(intersection);
+            //    first = false;
+            //}
 
+            // && first == true
             else if (i == bisectorInd)
             {
+                Debug.Log("Type3");
                 plot1.Add(vertices[i]);
                 plot1.Add(bisector);
                 first = false;
             }
+            //else if (i == bisectorInd && first == false)
+            //{
+            //    plot2.Add(vertices[i]);
+            //    plot2.Add(bisector);
+            //}
 
             else if (first && i != bisectorInd)
             {
+                Debug.Log("Type4");
                 plot1.Add(vertices[i]);
             }
             else if (!first && i != bisectorInd && i != intersectionInd )
             {
+                Debug.Log("Type5");
                 plot2.Add(vertices[i]);
             }
 
@@ -214,19 +235,20 @@ public class CellFill : MonoBehaviour {
         List<int> plotIntersection = new List<int>();
 
         //float segmentAngle = Mathf.Rad2Deg * Mathf.Atan(slope);
-        //Debug.Log("In LineIntersection invSlope is: " + invSlope);
+        Debug.Log("Starting line intersection");
         int trend = -1;
         int location = -1;
         for (int i = startInd; i < plot.Count + startInd; i++)
         {
+
+            int j = (i) % plot.Count;
             int l = (i + 1) % plot.Count;
             //Debug.Log("l = " + l);
-            int j = (i) % plot.Count;
+            //Debug.Log("i and j are: " + j + " and " + l);
             Debug.Log("Checking between midpoint: " + midPoint + " and vertex: " + plot[l]);
 
             float b = midPoint.y - invSlope * midPoint.x;
             Debug.Log("trend is: " + trend + " and location is: " + location);
-            trend = location;
             location = locationToLine(invSlope, b, plot[l], midPoint.x);
             //  if (trend == -1)
             //  {
@@ -245,11 +267,12 @@ public class CellFill : MonoBehaviour {
                     return plotIntersection;
                 }
                 Debug.Log("Crosses bisector line");
+                Debug.Log("intersects between " + j + " and " + l);
                 plotIntersection.Add(j);
                 plotIntersection.Add(l);
                 return plotIntersection;
             }
-            //trend = location;
+            trend = location;
             Debug.Log("Trend and location are now: " + trend + " and " + location);
         }
         Debug.Log("Returning nothing");
@@ -335,14 +358,14 @@ public class CellFill : MonoBehaviour {
         }
     }
 
-    void OnDrawGizmos()
-    {
-        //Debug.Log(buildingVertices);
-        Gizmos.color = Color.red;
-        for (int i = 0; i < buildingLines.Count; i++)
-        {
-            Gizmos.DrawLine(buildingLines[i].getStart(), buildingLines[i].getEnd());
-        }
-    }
+    //void OnDrawGizmos()
+    //{
+    //    //Debug.Log(buildingVertices);
+    //    Gizmos.color = Color.red;
+    //    for (int i = 0; i < buildingLines.Count; i++)
+    //    {
+    //        Gizmos.DrawLine(buildingLines[i].getStart(), buildingLines[i].getEnd());
+    //    }
+    //}
 }
 

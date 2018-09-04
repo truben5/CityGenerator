@@ -204,7 +204,7 @@ public class CellFillTest : MonoBehaviour {
     {
         newShapes.Add(plot1);
 
-        newShapes = voronoiCell.GetComponent<CellFill>().MakeBuildingShapes(newShapes, 5, 0);
+        newShapes = voronoiCell.GetComponent<CellFill>().MakeBuildingShapes(newShapes, 15, 0);
     }
 
     void OnDrawGizmos()
