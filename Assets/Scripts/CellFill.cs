@@ -14,7 +14,7 @@ public class CellFill : MonoBehaviour {
     // until all sides are smaller or equal to max length
     public void MakeBuildings(List<List<Vector2f>> cellPlot, int maxLength)
     {
-        Debug.Log("Starting MakeBuildings");
+        //Debug.Log("Starting MakeBuildings");
         cellPlot = MakeBuildingShapes(cellPlot, maxLength, 0);
         for (int i=0; i < cellPlot.Count; i++)
         {
@@ -35,10 +35,10 @@ public class CellFill : MonoBehaviour {
             for (int j = 0; j < cellPlot[i].Count; j++)
             {
                 int k = (j + 1) % cellPlot[i].Count;
-                Debug.Log("Distance between " + cellPlot[i][j] + " and " + cellPlot[i][k]);
+                //Debug.Log("Distance between " + cellPlot[i][j] + " and " + cellPlot[i][k]);
                 if (TooBig(cellPlot[i][j], cellPlot[i][k], maxLength))
                 {
-                    Debug.Log("Too big");
+                    //Debug.Log("Too big");
                     //Debug.Log("j = " + j + " k = " + k);
                     List<List<Vector2f>> splitPlot = BisectCell(cellPlot[i], maxLength, 0, j, k);
                     cellPlot[i] = splitPlot[0];
@@ -111,72 +111,120 @@ public class CellFill : MonoBehaviour {
         List<Vector2f> plot1 = new List<Vector2f>();
         List<Vector2f> plot2 = new List<Vector2f>();
         bool first = true;
-        Debug.Log("splitting plot");
+        //Debug.Log("splitting plot");
         for (int i = 0; i < vertices.Count; i++)
         {
-            //Debug.Log("vertex list is: " + vertices[i]);
-            if (i == intersectionInd && intersectIsVertex)
+            if (first && i != bisectorInd && i != intersectionInd)
             {
-                Debug.Log("Type1");
-                plot2.Add(vertices[i]);
-                plot2.Add(bisector);
+                Debug.Log("case1");
                 plot1.Add(vertices[i]);
             }
-
-            //  && first == false
-            else if (i == intersectionInd && !intersectIsVertex)
+            else if (first && i == bisectorInd)
             {
-                Debug.Log("Type2");
-                plot2.Add(vertices[i]);
-                plot2.Add(intersection);
-                plot2.Add(bisector);
+                Debug.Log("case2");
+                plot1.Add(vertices[i]);
+                plot1.Add(bisector);
                 plot1.Add(intersection);
-                first = true;
-            }
-            // Something with this case??
-            //else if (i == intersectionInd && !intersectIsVertex && first == true)
-            //{
-            //    plot1.Add(vertices[i]);
-            //    plot1.Add(intersection);
-            //    plot2.Add(intersection);
-            //    first = false;
-            //}
 
-            // && first == true
-            else if (i == bisectorInd)
+                plot2.Add(bisector);
+                first = false;
+            }
+            else if (first && i == intersectionInd)
             {
-                Debug.Log("Type3");
+                Debug.Log("case3");
                 plot1.Add(vertices[i]);
+                plot1.Add(intersection);
                 plot1.Add(bisector);
                 first = false;
             }
-            //else if (i == bisectorInd && first == false)
-            //{
-            //    plot2.Add(vertices[i]);
-            //    plot2.Add(bisector);
-            //}
-
-            else if (first && i != bisectorInd)
+            else if (!first && i != bisectorInd && i != intersectionInd)
             {
-                Debug.Log("Type4");
-                plot1.Add(vertices[i]);
-            }
-            else if (!first && i != bisectorInd && i != intersectionInd )
-            {
-                Debug.Log("Type5");
+                Debug.Log("case4");
                 plot2.Add(vertices[i]);
             }
+            else if (!first && i == bisectorInd)
+            {
+                Debug.Log("case5");
+                plot2.Add(vertices[i]);
+                plot2.Add(bisector);
+                plot2.Add(intersection);
+                first = true;
+            }
+            else if (!first && i == intersectionInd)
+            {
+                Debug.Log("case6");
+                plot2.Add(vertices[i]);
+                plot2.Add(intersection);
+                //plot2.Add(bisector);
+                first = true;
+            }
+            else
+            {
+                throw new System.Exception("Unthought of case");
+            }
+            ////Debug.Log("vertex list is: " + vertices[i]);
+            //if (first && i == intersectionInd && intersectIsVertex)
+            //{
+            //    Debug.Log("Type1");
+            //    plot2.Add(vertices[i]);
+            //    plot2.Add(bisector);
+            //    plot1.Add(vertices[i]);
+            //}
+
+            ////  && first == false
+            //else if (i == intersectionInd && !intersectIsVertex)
+            //{
+            //    Debug.Log("Type2");
+            //    plot2.Add(vertices[i]);
+            //    plot2.Add(intersection);
+            //    plot2.Add(bisector);
+            //    plot1.Add(intersection);
+            //    first = true;
+            //}
+            //// Something with this case??
+            ////else if (i == intersectionInd && !intersectIsVertex && first == true)
+            ////{
+            ////    plot1.Add(vertices[i]);
+            ////    plot1.Add(intersection);
+            ////    plot2.Add(intersection);
+            ////    first = false;
+            ////}
+
+            //// && first == true
+            //else if (i == bisectorInd)
+            //{
+            //    Debug.Log("Type3");
+            //    plot1.Add(vertices[i]);
+            //    plot1.Add(bisector);
+            //    first = false;
+            //}
+            ////else if (i == bisectorInd && first == false)
+            ////{
+            ////    plot2.Add(vertices[i]);
+            ////    plot2.Add(bisector);
+            ////}
+
+            //else if (first && i != bisectorInd)
+            //{
+            //    Debug.Log("Type4");
+            //    plot1.Add(vertices[i]);
+            //}
+            //else if (!first && i != bisectorInd && i != intersectionInd )
+            //{
+            //    Debug.Log("Type5");
+            //    plot2.Add(vertices[i]);
+            //}
 
         }
         //for debugging
-        for (int i = 0; i < plot1.Count; i++)
-            {
-                Debug.Log("plot1 ind " + i + " is: " + plot1[i]);
-            }
-        for (int j = 0; j < plot2.Count; j++)
-        {
-            Debug.Log("Plot2 ind " + j + " is " + plot2[j]);
-        }
+        //for (int i = 0; i < plot1.Count; i++)
+        //    {
+        //        Debug.Log("plot1 ind " + i + " is: " + plot1[i]);
+        //    }
+        //for (int j = 0; j < plot2.Count; j++)
+        //{
+        //    Debug.Log("Plot2 ind " + j + " is " + plot2[j]);
+        //}
         newBuildings.Add(plot1);
         newBuildings.Add(plot2);
         return newBuildings;
@@ -194,7 +242,7 @@ public class CellFill : MonoBehaviour {
     public bool TooBig(Vector2f start, Vector2f end, int maxLength)
     {
         float dist = Distance(start.x, start.y, end.x, end.y);
-        Debug.Log("Distance is: " + dist);
+        //Debug.Log("Distance is: " + dist);
         if (dist > maxLength)
         {
             return true;
@@ -206,7 +254,7 @@ public class CellFill : MonoBehaviour {
     public Vector2f Midpoint(float x1, float y1, float x2, float y2)
     {
         Vector2f mid = new Vector2f((x1 + x2)/2.0, (y1 + y2)/2.0);
-        Debug.Log("Midpoint :" + mid.x + ", " + mid.y);
+        //Debug.Log("Midpoint :" + mid.x + ", " + mid.y);
         return mid;
     } 
 
@@ -235,7 +283,7 @@ public class CellFill : MonoBehaviour {
         List<int> plotIntersection = new List<int>();
 
         //float segmentAngle = Mathf.Rad2Deg * Mathf.Atan(slope);
-        Debug.Log("Starting line intersection");
+        //Debug.Log("Starting line intersection");
         int trend = -1;
         int location = -1;
         for (int i = startInd; i < plot.Count + startInd; i++)
@@ -245,10 +293,10 @@ public class CellFill : MonoBehaviour {
             int l = (i + 1) % plot.Count;
             //Debug.Log("l = " + l);
             //Debug.Log("i and j are: " + j + " and " + l);
-            Debug.Log("Checking between midpoint: " + midPoint + " and vertex: " + plot[l]);
+            //Debug.Log("Checking between midpoint: " + midPoint + " and vertex: " + plot[l]);
 
             float b = midPoint.y - invSlope * midPoint.x;
-            Debug.Log("trend is: " + trend + " and location is: " + location);
+            //Debug.Log("trend is: " + trend + " and location is: " + location);
             location = locationToLine(invSlope, b, plot[l], midPoint.x);
             //  if (trend == -1)
             //  {
@@ -266,16 +314,16 @@ public class CellFill : MonoBehaviour {
                     plotIntersection.Add(l);
                     return plotIntersection;
                 }
-                Debug.Log("Crosses bisector line");
-                Debug.Log("intersects between " + j + " and " + l);
+                //Debug.Log("Crosses bisector line");
+                //Debug.Log("intersects between " + j + " and " + l);
                 plotIntersection.Add(j);
                 plotIntersection.Add(l);
                 return plotIntersection;
             }
             trend = location;
-            Debug.Log("Trend and location are now: " + trend + " and " + location);
+            //Debug.Log("Trend and location are now: " + trend + " and " + location);
         }
-        Debug.Log("Returning nothing");
+        //Debug.Log("Returning nothing");
         return plotIntersection;
     }
 
@@ -306,7 +354,7 @@ public class CellFill : MonoBehaviour {
 
         double x = (b2 * c1 - b1 * c2) / determinant;
         double y = (a1 * c2 - a2 * c1) / determinant;
-        Debug.Log("Intersection point is: " + x + ", " + y);
+        //Debug.Log("Intersection point is: " + x + ", " + y);
         return new Vector2f(x,y);
     }
 
@@ -314,7 +362,7 @@ public class CellFill : MonoBehaviour {
     // If the slope is infinite (vertical line) uses the x values to determine if point is right or left of line
     public int locationToLine(float m, float b, Vector2f p, float midPointX)
     {
-        Debug.Log("Equation of line is: y = " + m + "x + " + b);
+        //Debug.Log("Equation of line is: y = " + m + "x + " + b);
         float resultY;
         if (double.IsInfinity(m))
         {
@@ -358,14 +406,14 @@ public class CellFill : MonoBehaviour {
         }
     }
 
-    //void OnDrawGizmos()
-    //{
-    //    //Debug.Log(buildingVertices);
-    //    Gizmos.color = Color.red;
-    //    for (int i = 0; i < buildingLines.Count; i++)
-    //    {
-    //        Gizmos.DrawLine(buildingLines[i].getStart(), buildingLines[i].getEnd());
-    //    }
-    //}
+    void OnDrawGizmos()
+    {
+        //Debug.Log(buildingVertices);
+        Gizmos.color = Color.red;
+        for (int i = 0; i < buildingLines.Count; i++)
+        {
+            Gizmos.DrawLine(buildingLines[i].getStart(), buildingLines[i].getEnd());
+        }
+    }
 }
 
