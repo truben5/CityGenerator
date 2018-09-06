@@ -187,20 +187,30 @@ public class CellFillTest : MonoBehaviour {
 
         newShapes = voronoiCell.GetComponent<CellFill>().SplitPlotArray(plot2, midPoint, 0, intersection, 2, true);
 
-        //if (newShapes[0].Count != 3 || newShapes[1].Count != 3)
-        //{
-        //    throw new System.Exception("Expected plot 1 and plot 2 to have 3 vertices each but 1: " + newShapes[0].Count + " and 2: " + newShapes[1].Count);
-        //}
+        if (newShapes[0].Count != 3 || newShapes[1].Count != 3)
+        {
+            throw new System.Exception("Expected plot 1 and plot 2 to have 3 vertices each but 1: " + newShapes[0].Count + " and 2: " + newShapes[1].Count);
+        }
 
-        //if (newShapes[0][0] != plot2[0] || newShapes[0][1] != midPoint || newShapes[0][2] != plot2[2])
-        //{
-        //    throw new System.Exception("Error in vertices for new plot 1");
-        //}
-        //if (newShapes[1][0] != plot2[1] || newShapes[1][1] != plot2[2] || newShapes[1][2] != midPoint)
-        //{
-        //    throw new System.Exception("Error in vertices for new plot 2");
-        //}
+        if (newShapes[0][0] != plot2[0] || newShapes[0][1] != midPoint || newShapes[0][2] != plot2[2])
+        {
+            throw new System.Exception("Error in vertices for new plot 1");
+        }
+        if (newShapes[1][0] != midPoint || newShapes[1][1] != plot2[1] || newShapes[1][2] != intersection)
+        {
+            throw new System.Exception("Error in vertices for new plot 2");
+        }
+        /*
+         * 
+         * 
+         * 
+         * TO DO - ADD REVERSE TRIANGLE FOR INTERSECTION FIRST THEN BISECTOR
+         * 
+         * 
+         * */
     }
+
+
 
     public void MakeBuidlingShapes()
     {

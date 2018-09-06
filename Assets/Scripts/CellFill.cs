@@ -129,13 +129,18 @@ public class CellFill : MonoBehaviour {
                 plot2.Add(bisector);
                 first = false;
             }
-            else if (first && i == intersectionInd)
+            else if (first && i == intersectionInd && !intersectIsVertex)
             {
                 //Debug.Log("case3");
                 plot1.Add(vertices[i]);
                 plot1.Add(intersection);
                 plot1.Add(bisector);
                 first = false;
+            }
+            else if (first && i == intersectionInd && intersectIsVertex)
+            {
+                plot1.Add(intersection);
+                plot1.Add(bisector);
             }
             else if (!first && i != bisectorInd && i != intersectionInd)
             {
@@ -150,13 +155,17 @@ public class CellFill : MonoBehaviour {
                 plot2.Add(intersection);
                 first = true;
             }
-            else if (!first && i == intersectionInd)
+            else if (!first && i == intersectionInd && !intersectIsVertex)
             {
                 //Debug.Log("case6");
                 plot2.Add(vertices[i]);
                 plot2.Add(intersection);
                 //plot2.Add(bisector);
                 first = true;
+            }
+            else if (!first && i == intersectionInd && intersectIsVertex)
+            {
+                plot2.Add(intersection);
             }
             else
             {
