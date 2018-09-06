@@ -116,12 +116,12 @@ public class CellFill : MonoBehaviour {
         {
             if (first && i != bisectorInd && i != intersectionInd)
             {
-                Debug.Log("case1");
+                //Debug.Log("case1");
                 plot1.Add(vertices[i]);
             }
             else if (first && i == bisectorInd)
             {
-                Debug.Log("case2");
+                //Debug.Log("case2");
                 plot1.Add(vertices[i]);
                 plot1.Add(bisector);
                 plot1.Add(intersection);
@@ -131,7 +131,7 @@ public class CellFill : MonoBehaviour {
             }
             else if (first && i == intersectionInd)
             {
-                Debug.Log("case3");
+                //Debug.Log("case3");
                 plot1.Add(vertices[i]);
                 plot1.Add(intersection);
                 plot1.Add(bisector);
@@ -139,12 +139,12 @@ public class CellFill : MonoBehaviour {
             }
             else if (!first && i != bisectorInd && i != intersectionInd)
             {
-                Debug.Log("case4");
+                //Debug.Log("case4");
                 plot2.Add(vertices[i]);
             }
             else if (!first && i == bisectorInd)
             {
-                Debug.Log("case5");
+                //Debug.Log("case5");
                 plot2.Add(vertices[i]);
                 plot2.Add(bisector);
                 plot2.Add(intersection);
@@ -152,7 +152,7 @@ public class CellFill : MonoBehaviour {
             }
             else if (!first && i == intersectionInd)
             {
-                Debug.Log("case6");
+                //Debug.Log("case6");
                 plot2.Add(vertices[i]);
                 plot2.Add(intersection);
                 //plot2.Add(bisector);
