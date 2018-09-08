@@ -139,17 +139,19 @@ public class CellFill : MonoBehaviour {
             }
             else if (first && i == intersectionInd && intersectIsVertex)
             {
+                //Debug.Log("case4");
                 plot1.Add(intersection);
                 plot1.Add(bisector);
+                first = false;
             }
             else if (!first && i != bisectorInd && i != intersectionInd)
             {
-                //Debug.Log("case4");
+                //Debug.Log("case5");
                 plot2.Add(vertices[i]);
             }
             else if (!first && i == bisectorInd)
             {
-                //Debug.Log("case5");
+                //Debug.Log("case6");
                 plot2.Add(vertices[i]);
                 plot2.Add(bisector);
                 plot2.Add(intersection);
@@ -157,7 +159,7 @@ public class CellFill : MonoBehaviour {
             }
             else if (!first && i == intersectionInd && !intersectIsVertex)
             {
-                //Debug.Log("case6");
+                //Debug.Log("case7");
                 plot2.Add(vertices[i]);
                 plot2.Add(intersection);
                 //plot2.Add(bisector);
@@ -165,67 +167,15 @@ public class CellFill : MonoBehaviour {
             }
             else if (!first && i == intersectionInd && intersectIsVertex)
             {
+                //Debug.Log("case8");
                 plot2.Add(intersection);
             }
             else
             {
                 throw new System.Exception("Unthought of case");
             }
-            ////Debug.Log("vertex list is: " + vertices[i]);
-            //if (first && i == intersectionInd && intersectIsVertex)
-            //{
-            //    Debug.Log("Type1");
-            //    plot2.Add(vertices[i]);
-            //    plot2.Add(bisector);
-            //    plot1.Add(vertices[i]);
-            //}
-
-            ////  && first == false
-            //else if (i == intersectionInd && !intersectIsVertex)
-            //{
-            //    Debug.Log("Type2");
-            //    plot2.Add(vertices[i]);
-            //    plot2.Add(intersection);
-            //    plot2.Add(bisector);
-            //    plot1.Add(intersection);
-            //    first = true;
-            //}
-            //// Something with this case??
-            ////else if (i == intersectionInd && !intersectIsVertex && first == true)
-            ////{
-            ////    plot1.Add(vertices[i]);
-            ////    plot1.Add(intersection);
-            ////    plot2.Add(intersection);
-            ////    first = false;
-            ////}
-
-            //// && first == true
-            //else if (i == bisectorInd)
-            //{
-            //    Debug.Log("Type3");
-            //    plot1.Add(vertices[i]);
-            //    plot1.Add(bisector);
-            //    first = false;
-            //}
-            ////else if (i == bisectorInd && first == false)
-            ////{
-            ////    plot2.Add(vertices[i]);
-            ////    plot2.Add(bisector);
-            ////}
-
-            //else if (first && i != bisectorInd)
-            //{
-            //    Debug.Log("Type4");
-            //    plot1.Add(vertices[i]);
-            //}
-            //else if (!first && i != bisectorInd && i != intersectionInd )
-            //{
-            //    Debug.Log("Type5");
-            //    plot2.Add(vertices[i]);
-            //}
-
         }
-        //for debugging
+        ////for debugging
         //for (int i = 0; i < plot1.Count; i++)
         //    {
         //        Debug.Log("plot1 ind " + i + " is: " + plot1[i]);

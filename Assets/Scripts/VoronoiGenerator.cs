@@ -17,8 +17,8 @@ public class VoronoiGenerator : MonoBehaviour {
     void Start()
     {
         GenerateVoronoi();
-        AddBuildings();
-        //voronoiCell.GetComponent<CellFillTest>();
+        //AddBuildings();
+        voronoiCell.GetComponent<CellFillTest>();
 
     }
 
