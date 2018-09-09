@@ -5,17 +5,17 @@ using UnityEngine;
 public class CellFill : MonoBehaviour {
 
     //List<Vector2f> shapeToFill = new List<Vector2f>();
-    private List<List<Vector2f>> buildings = new List<List<Vector2f>>();
+    private List<Vector2f> buildingsPoints = new List<Vector2f>();
     private List<StructureLine> buildingLines = new List<StructureLine>();
-    // to debug
-    //private List<StructureLine> buildingLines = new List<StructureLine>();
 
     // Checks if any sides of plot are longer than max length. If so splits the polygon
     // until all sides are smaller or equal to max length
-    public void MakeBuildings(List<List<Vector2f>> cellPlot, int maxLength)
+    public List<List<Vector2f>> MakeBuildings(List<List<Vector2f>> cellPlot, int maxLength)
     {
         //Debug.Log("Starting MakeBuildings");
         cellPlot = MakeBuildingShapes(cellPlot, maxLength, 0);
+
+        Debug.Log("For debugging");
         for (int i=0; i < cellPlot.Count; i++)
         {
             for (int j = 0; j < cellPlot[i].Count; j++)
@@ -26,7 +26,7 @@ public class CellFill : MonoBehaviour {
                 buildingLines.Add(line);
             }
         }
-        
+        return cellPlot;
     }
 
     public List<List<Vector2f>> MakeBuildingShapes(List<List<Vector2f>> cellPlot, int maxLength, int ptr)
@@ -45,12 +45,12 @@ public class CellFill : MonoBehaviour {
                     cellPlot.Insert(i+1, splitPlot[1]);
                     //Recursive Call
                     cellPlot = MakeBuildingShapes(cellPlot, maxLength, i);
-                 
                 }
             }
         return cellPlot;
     }
 
+    // Splits cell into two shapes and returns the list of shapes
     private List<List<Vector2f>> BisectCell(List<Vector2f> buildingShapes, int maxLength,
         int plotInd, int segStartInd, int segEndInd)
     {
@@ -250,17 +250,10 @@ public class CellFill : MonoBehaviour {
 
             int j = (i) % plot.Count;
             int l = (i + 1) % plot.Count;
-            //Debug.Log("l = " + l);
-            //Debug.Log("i and j are: " + j + " and " + l);
-            //Debug.Log("Checking between midpoint: " + midPoint + " and vertex: " + plot[l]);
 
             float b = midPoint.y - invSlope * midPoint.x;
             //Debug.Log("trend is: " + trend + " and location is: " + location);
-            location = locationToLine(invSlope, b, plot[l], midPoint.x);
-            //  if (trend == -1)
-            //  {
-            //      trend = location;
-            //  }
+            location = LocationToLine(invSlope, b, plot[l], midPoint.x);
             if (trend == 2)
             {
                 plotIntersection.Add(j);
@@ -319,7 +312,7 @@ public class CellFill : MonoBehaviour {
 
     // Takes in the slope and y intercept for a line equation.  Determines if point is below, above, or on line 
     // If the slope is infinite (vertical line) uses the x values to determine if point is right or left of line
-    public int locationToLine(float m, float b, Vector2f p, float midPointX)
+    public int LocationToLine(float m, float b, Vector2f p, float midPointX)
     {
         //Debug.Log("Equation of line is: y = " + m + "x + " + b);
         float resultY;

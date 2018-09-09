@@ -17,8 +17,7 @@ public class VoronoiGenerator : MonoBehaviour {
     void Start()
     {
         GenerateVoronoi();
-        //AddBuildings();
-        voronoiCell.GetComponent<CellFillTest>();
+        AddBuildings();
 
     }
 
@@ -27,6 +26,7 @@ public class VoronoiGenerator : MonoBehaviour {
     {
         Rectf bounds = new Rectf(0, 0, length, width);
         List<Vector2f> points = CreateRandomPoints();
+        // Creates diagram
         Voronoi voronoi = new Voronoi(points, bounds, 3);
 
         for (int i=0; i < points.Count; i++)
@@ -34,7 +34,7 @@ public class VoronoiGenerator : MonoBehaviour {
             voronoiCell = Instantiate(voronoiCell);
             voronoiCell.transform.parent = parentDiagram.transform;
             voronoiCell.name = "cell " + i;
-            voronoiCell.GetComponent<VoronoiCell>().setCellVertices(voronoi.Regions()[i]);
+            voronoiCell.GetComponent<VoronoiCell>().SetCellVertices(voronoi.Regions()[i]);
             //Debug.Log(this.cells);
             cells.Add(voronoiCell);
         }
@@ -58,12 +58,12 @@ public class VoronoiGenerator : MonoBehaviour {
         for (int i=0; i < cells.Count; i++)
         {
             List<List<Vector2f>> cellBuildings = new List<List<Vector2f>>();
-            cellBuildings.Add(cells[i].GetComponent<VoronoiCell>().getCellVertices());
+            cellBuildings.Add(cells[i].GetComponent<VoronoiCell>().GetCellVertices());
             //for (int j=0; j < cellVertices.Count; j++)
             //{
             //    Debug.Log("Cell " + i + ": " + cellVertices[j].x + ", " + cellVertices[j].y);
             //}
-            cells[i].GetComponent<CellFill>().MakeBuildings(cellBuildings, maxLength);
+            cells[i].GetComponent<VoronoiCell>().SetBuildings(cells[i].GetComponent<CellFill>().MakeBuildings(cellBuildings, maxLength));
         }
     }
 
@@ -73,7 +73,7 @@ public class VoronoiGenerator : MonoBehaviour {
         Gizmos.color = Color.black;
         for (int i = 0; i < cells.Count; i++)
         {
-            List<Vector2f> cellVertices = cells[i].GetComponent<VoronoiCell>().getCellVertices();
+            List<Vector2f> cellVertices = cells[i].GetComponent<VoronoiCell>().GetCellVertices();
 
             for (int j = 0; j < cellVertices.Count; j++)
             {
@@ -83,8 +83,6 @@ public class VoronoiGenerator : MonoBehaviour {
                 Vector3 endVector = new Vector3(cellVertices[z].x, cellVertices[z].y, 0);
                 Gizmos.DrawLine(startVector, endVector);
             }
-
         }
     }
-
 }
