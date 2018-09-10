@@ -274,12 +274,23 @@ public class CellFillTest : MonoBehaviour {
     {
         newShapes.Add(plot1);
 
-        newShapes = voronoiCell.GetComponent<CellFill>().MakeBuildingShapes(newShapes, 10, 0);
+        newShapes = voronoiCell.GetComponent<CellFill>().MakeBuildingShapes(newShapes, 16, 0);
+        
+        //for (int i = 0; i < newShapes.Count;i++)
+        //{
+        //    Debug.Log("Shape " + i);
+        //    for (int j = 0; j < newShapes[i].Count; j++)
+        //    {
+        //        Debug.Log("Vertex " + j);
+        //        Debug.Log(newShapes[i][j]);
+        //    }
+        //}
+        voronoiCell.GetComponent<VoronoiCell>().SetBuildings(newShapes);
     }
 
     //void OnDrawGizmos()
     //{
-    //    Gizmos.color = Color.black;
+    //    Gizmos.color = Color.yellow;
     //    for (int i = 0; i < plot1.Count; i++)
     //    {
     //        int j = (i + 1) % plot1.Count;
@@ -288,7 +299,7 @@ public class CellFillTest : MonoBehaviour {
     //        Gizmos.DrawLine(startVector, endVector);
     //    }
 
-    //    Gizmos.color = Color.black;
+    //    Gizmos.color = Color.green;
     //    for (int i = 0; i < newShapes.Count; i++)
     //    {
     //        for (int j = 0; j < newShapes[i].Count; j++)

@@ -15,7 +15,7 @@ public class CellFill : MonoBehaviour {
         //Debug.Log("Starting MakeBuildings");
         cellPlot = MakeBuildingShapes(cellPlot, maxLength, 0);
 
-        Debug.Log("For debugging");
+        //Debug.Log("For debugging");
         for (int i=0; i < cellPlot.Count; i++)
         {
             for (int j = 0; j < cellPlot[i].Count; j++)
@@ -51,10 +51,10 @@ public class CellFill : MonoBehaviour {
     }
 
     // Splits cell into two shapes and returns the list of shapes
-    private List<List<Vector2f>> BisectCell(List<Vector2f> buildingShapes, int maxLength,
+    private List<List<Vector2f>> BisectCell(List<Vector2f> buildingShape, int maxLength,
         int plotInd, int segStartInd, int segEndInd)
     {
-        List<Vector2f> myPlot = buildingShapes;
+        List<Vector2f> myPlot = buildingShape;
 
         float slope = Slope(myPlot[segStartInd].x, myPlot[segStartInd].y, myPlot[segEndInd].x,
             myPlot[segEndInd].y);
@@ -95,7 +95,7 @@ public class CellFill : MonoBehaviour {
             //wall = new StructureLine(midPoint, intersection);
         }
 
-        List<List<Vector2f>> resultShapes = SplitPlotArray(buildingShapes, midPoint, segStartInd, intersection, intersectingSeg[0], intersectIsVertex);
+        List<List<Vector2f>> resultShapes = SplitPlotArray(buildingShape, midPoint, segStartInd, intersection, intersectingSeg[0], intersectIsVertex);
 
         //buildings.Add(wall);
         //buildingLines.Add(wall);

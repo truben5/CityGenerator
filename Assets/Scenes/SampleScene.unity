@@ -288,6 +288,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1432894855}
   - component: {fileID: 1432894856}
+  - component: {fileID: 1432894854}
   m_Layer: 0
   m_Name: VoronoiGenerator
   m_TagString: Untagged
@@ -295,6 +296,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1432894854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1432894853}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47cc83d8ade914748ba1b4cf875b63bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  voronoiCell: {fileID: 1582214741797256, guid: 6ae2feabd00ed8846a03d5cc2145bdda,
+    type: 2}
 --- !u!4 &1432894855
 Transform:
   m_ObjectHideFlags: 0
@@ -319,10 +333,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85fa4ab9fd27c84b8349c06dd2ec462, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellNum: 40
+  cellNum: 3
   width: 200
   length: 200
-  maxLength: 10
+  maxLength: 75
   voronoiCell: {fileID: 1582214741797256, guid: 6ae2feabd00ed8846a03d5cc2145bdda,
     type: 2}
   parentDiagram: {fileID: 77397809}

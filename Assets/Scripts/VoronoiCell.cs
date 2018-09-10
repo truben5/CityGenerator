@@ -8,6 +8,7 @@ public class VoronoiCell : MonoBehaviour {
     private List<GameObject> buildings = new List<GameObject>();
 
     public GameObject cellBuilding;
+    private GameObject instanceCellBuilding;
 
     public List<Vector2f> GetCellVertices()
     {
@@ -17,7 +18,7 @@ public class VoronoiCell : MonoBehaviour {
     // Sets vertices of voronoi cell
     public void SetCellVertices(List<Vector2f> regionVertices)
     {
-        for (int i=0; i < regionVertices.Count; i++)
+        for (int i = 0; i < regionVertices.Count; i++)
         {
             vertices.Add(regionVertices[i]);
         }
@@ -33,17 +34,40 @@ public class VoronoiCell : MonoBehaviour {
     // Takes in array of points and creates the building objects within a cell
     public void SetBuildings(List<List<Vector2f>> cellBuildings)
     {
-        for (int i = 0; i < cellBuildings[i].Count; i++)
+        for (int i = 0; i < cellBuildings.Count; i++)
         {
-            cellBuilding = Instantiate(cellBuilding);
-            cellBuilding.transform.parent = this.transform;
-            cellBuilding.name = "building " + i;
-            Debug.Log(cellBuildings[i]);
-            Debug.Log(cellBuilding.GetComponent<Building>());
-            Debug.Log(cellBuilding);
-            //cellBuilding.GetComponent<Building>().SetVertices(cellBuildings[i]);
-
+            instanceCellBuilding = Instantiate(cellBuilding);
+            instanceCellBuilding.transform.parent = this.transform;
+            instanceCellBuilding.name = "building " + i;
+            instanceCellBuilding.GetComponent<Building>().SetVertices(cellBuildings[i]);
+            // Debugging
+            //List<Vector2f> vertices = instanceCellBuilding.GetComponent<Building>().GetVertices();
+            //for (int j = 0; j < vertices.Count; j++)
+            //{
+            //    Debug.Log(vertices[j].x + ", " + vertices[j].y);
+            //}
+            buildings.Add(instanceCellBuilding);
         }
     }
-	
+
+    //void OnDrawGizmos(){
+    //    //Debug.Log("Draw Gizmos");
+    //    Gizmos.color = Color.red;
+    //    //Debug.Log(buildings.Count);
+    //    for (int i = 0; i < buildings.Count; i++)
+    //    {
+    //        //Debug.Log("Outer Loop");
+    //        List<Vector2f> vertices = buildings[i].GetComponent<Building>().GetVertices();
+    //        for (int j = 0; j < vertices.Count; j++)
+    //        {
+    //            //Debug.Log("Inner loop");
+    //            int k = (j + 1) % vertices.Count;
+    //            Vector3 startVector = new Vector3(vertices[j].x, vertices[j].y, 0);
+    //            Vector3 endVector = new Vector3(vertices[k].x, vertices[k].y, 0);
+    //            Gizmos.DrawLine(startVector, endVector);
+    //        }
+            
+    //    }
+    //}
+
 }

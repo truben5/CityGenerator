@@ -63,4 +63,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bffc0074b5fb7f641b44928fb48c66f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  building: {fileID: 1111785806398796, guid: 667ef1ed2f0e1f740a0644a02e14cc2f, type: 2}
+  cellBuilding: {fileID: 1111785806398796, guid: 667ef1ed2f0e1f740a0644a02e14cc2f,
+    type: 2}

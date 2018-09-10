@@ -22,8 +22,9 @@ GameObject:
   - component: {fileID: 33699703100511812}
   - component: {fileID: 114063825187554766}
   - component: {fileID: 23972297594962650}
+  - component: {fileID: 114741704667128206}
   m_Layer: 0
-  m_Name: Buiding
+  m_Name: Building
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93,5 +94,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4c9042d4874d92446b96a6b870dae401, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114741704667128206
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1111785806398796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2df83867368999640acbf7cb96930f64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

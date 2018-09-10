@@ -1,20 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MIConvexHull;
+
 
 public class Building : MonoBehaviour {
 
-    private List<Vector2f> vertices;
-	
+    private List<Vector2f> vertices = new List<Vector2f>();
+
+    // Sets vertices for buildings as Vector3 and call CreateMesh
     public void SetVertices(List<Vector2f> buildingVertices)
     {
         vertices = buildingVertices;
-        CreateMesh(vertices);
     }
 
-    public void CreateMesh(List<Vector2f> buildingVertices)
+    public List<Vector2f> GetVertices()
     {
-        
+        return vertices;
     }
 }
