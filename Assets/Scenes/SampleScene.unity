@@ -333,10 +333,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85fa4ab9fd27c84b8349c06dd2ec462, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellNum: 3
+  cellNum: 25
   width: 200
   length: 200
-  maxLength: 75
+  maxLength: 10
   voronoiCell: {fileID: 1582214741797256, guid: 6ae2feabd00ed8846a03d5cc2145bdda,
     type: 2}
   parentDiagram: {fileID: 77397809}

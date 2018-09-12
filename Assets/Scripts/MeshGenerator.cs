@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using MIConvexHull;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -15,17 +16,14 @@ public class MeshGenerator : MonoBehaviour {
     }
 
     // Uses the buidling vertices to create a building mesh
-    public Mesh CreateMesh(List<Vector2> v)
+    public Mesh CreateMesh(IEnumerable<Vector3> points)
     {
-        MIConvexHull.IVertex n = new IVertex(); 
         Mesh mesh = new Mesh();
-        
-        var convexHull = ConvexHull.Create(v);
-        List<Vector3> vertices = Make3D(v);
-        mesh.SetVertices(vertices);
 
-        //mesh.SetTriangles();
-         
+        var vertices = points.Select(x => new Vertex(x)).ToList();
+
+        var result = ConvexHull.Create(vertices);
+
         return mesh;
     }
 
