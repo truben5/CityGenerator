@@ -19,5 +19,42 @@ public class VoronoiCell : MonoBehaviour {
         }
         //Debug.Log(vertices[0]);
     }
+
+    // Alters the cell perimeter to accomodate space for roads
+    public void MakeRoadSpace()
+    {
+        Vector2f centroid = getCentroid();
+
+        //Use cross product to find direction of centroid
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    // Find the average x and y value from the cell to find the centroid
+    private Vector2f getCentroid()
+    {
+        float xSum = 0;
+        float ySum = 0;
+
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            xSum += vertices[i].x;
+            ySum += vertices[i].y;
+        }
+
+        float xAvg = xSum / vertices.Count;
+        float yAvg = ySum / vertices.Count;
+
+        return new Vector2f(xAvg, yAvg);
+    }
 	
 }
