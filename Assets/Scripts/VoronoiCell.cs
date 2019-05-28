@@ -8,6 +8,7 @@ public class VoronoiCell : MonoBehaviour {
     private List<Vector2f> verticesForBuildings = new List<Vector2f>();
     private List<GameObject> buildingsList = new List<GameObject>();
 
+    private Vector2f centroid = new Vector2f();
 
     public GameObject cellBuilding;
     private GameObject instanceCellBuilding;
@@ -25,10 +26,20 @@ public class VoronoiCell : MonoBehaviour {
     // Sets vertices of voronoi cell
     public void SetCellVertices(List<Vector2f> regionVertices)
     {
+
+        float xSum = 0;
+        float ySum = 0;
+
         for (int i = 0; i < regionVertices.Count; i++)
         {
             vertices.Add(regionVertices[i]);
+            xSum += regionVertices[i].x;
+            ySum += regionVertices[i].y;
         }
+
+        centroid.x = xSum / regionVertices.Count;
+        centroid.y = ySum / regionVertices.Count;
+
         //Debug.Log(vertices[0]);
     }
 
@@ -41,7 +52,7 @@ public class VoronoiCell : MonoBehaviour {
     // Pulls in all edges of polygons to create room for roads
     public void CellShrink()
     {
-        Vector2f centroid = CalculateCentroid();
+        //Vector2f centroid = CalculateCentroid();
         Vector2f diffVector = new Vector2f();
 
         int roadWidth = 3;
@@ -72,6 +83,9 @@ public class VoronoiCell : MonoBehaviour {
             instanceCellBuilding.name = "building " + i;
             instanceCellBuilding.GetComponent<Building>().SetVertices(cellBuildings[i]);
 
+            // Sets position to the center of the building polygon
+            Vector2f center = instanceCellBuilding.GetComponent<Building>().GetCenter();
+            instanceCellBuilding.transform.position = new Vector3(center.x, center.y, 0);
             // Debugging
             //List<Vector2f> vertices = instanceCellBuilding.GetComponent<Building>().GetVertices();
             //for (int j = 0; j < vertices.Count; j++)
@@ -82,8 +96,9 @@ public class VoronoiCell : MonoBehaviour {
             buildingsList.Add(instanceCellBuilding);
         }
     }
+
     // Find the average x and y value from the cell to find the centroid
-    private Vector2f CalculateCentroid()
+    private void CalculateCentroid()
     {
         float xSum = 0;
         float ySum = 0;
@@ -94,7 +109,15 @@ public class VoronoiCell : MonoBehaviour {
             ySum += vertices[i].y;
         }
 
-        return new Vector2f(xSum / vertices.Count, ySum / vertices.Count);
+        centroid.x = xSum / vertices.Count;
+        centroid.y = ySum / vertices.Count;
+
+        //return new Vector2f(xSum / vertices.Count, ySum / vertices.Count);
+    }
+
+    public Vector2f GetCentroid()
+    {
+        return centroid;
     }
 
     void OnDrawGizmos()

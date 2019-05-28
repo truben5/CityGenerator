@@ -37,6 +37,10 @@ public class VoronoiGenerator : MonoBehaviour {
             voronoiCell.transform.parent = parentDiagram.transform;
             voronoiCell.name = "cell " + i;
             voronoiCell.GetComponent<VoronoiCell>().SetCellVertices(voronoi.Regions()[i]);
+
+            Vector2f centroid = voronoiCell.GetComponent<VoronoiCell>().GetCentroid();
+            voronoiCell.transform.position = new Vector3(centroid.x, centroid.y, 0);
+
             //Debug.Log(this.cells);
             cells.Add(voronoiCell);
         }
