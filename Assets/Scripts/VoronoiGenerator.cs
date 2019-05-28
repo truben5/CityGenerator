@@ -28,6 +28,7 @@ public class VoronoiGenerator : MonoBehaviour {
         Rectf bounds = new Rectf(0, 0, length, width);
         List<Vector2f> points = CreateRandomPoints();
         // Creates diagram
+        // Point array, bounds, number of lloyd iterations
         Voronoi voronoi = new Voronoi(points, bounds, 3);
 
         for (int i=0; i < points.Count; i++)
@@ -59,7 +60,15 @@ public class VoronoiGenerator : MonoBehaviour {
             cells[i].GetComponent<VoronoiCell>().CellShrink();
         }
     }
-
+    // Make space between each cell for the roads
+   /* private void createRoads()
+    {
+        for (int i = 0; i < cells.Count; i++)
+        {
+            cells[i].GetComponent<VoronoiCell>().MakeRoadSpace();
+        }
+    }
+    */
     // Makes buildings in cells
     private void AddBuildings()
     {

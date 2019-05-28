@@ -66,8 +66,7 @@ public class VoronoiCell : MonoBehaviour {
             buildings.Add(instanceCellBuilding);
         }
     }
-
-    // Calculates the centroid of the cell by averaging the x and y values of its vertices
+    // Find the average x and y value from the cell to find the centroid
     private Vector2f CalculateCentroid()
     {
         float xSum = 0;
@@ -101,5 +100,4 @@ public class VoronoiCell : MonoBehaviour {
             
     //    }
     //}
-
 }
