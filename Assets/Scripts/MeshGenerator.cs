@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using MIConvexHull;
 
 [RequireComponent(typeof(MeshFilter))]
 public class MeshGenerator : MonoBehaviour {
@@ -16,7 +15,7 @@ public class MeshGenerator : MonoBehaviour {
     }
 
     // Uses the buidling vertices to create a building mesh
-    public Mesh CreateMesh(IEnumerable<Vector3> points)
+   /* public Mesh CreateMesh(IEnumerable<Vector3> points)
     {
         Mesh mesh = new Mesh();
 
@@ -26,7 +25,7 @@ public class MeshGenerator : MonoBehaviour {
 
         return mesh;
     }
-
+    */
     public List<Vector3> Make3D(List<Vector2f> v)
     {
         List<Vector3> vertices = new List<Vector3>();

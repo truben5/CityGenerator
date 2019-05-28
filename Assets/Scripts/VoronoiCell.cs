@@ -31,6 +31,23 @@ public class VoronoiCell : MonoBehaviour {
         return buildings;
     }
 
+    // Pulls in all edges of polygons to create room for roads
+    public void CellShrink()
+    {
+        Vector2f centroid = CalculateCentroid();
+        Vector2f diffVector = new Vector2f();
+
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            diffVector.x = vertices[i].x - centroid.x;
+            diffVector.y = vertices[i].y - centroid.y;
+            diffVector.Normalize();
+
+            vertices[i] = new Vector2f(vertices[i].x - diffVector.x, vertices[i].y - diffVector.y);
+
+        }
+    }
+
     // Takes in array of points and creates the building objects within a cell
     public void SetBuildings(List<List<Vector2f>> cellBuildings)
     {
@@ -48,6 +65,21 @@ public class VoronoiCell : MonoBehaviour {
             //}
             buildings.Add(instanceCellBuilding);
         }
+    }
+
+    // Calculates the centroid of the cell by averaging the x and y values of its vertices
+    private Vector2f CalculateCentroid()
+    {
+        float xSum = 0;
+        float ySum = 0;
+
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            xSum += vertices[i].x;
+            ySum += vertices[i].y;
+        }
+
+        return new Vector2f(xSum / vertices.Count, ySum / vertices.Count);
     }
 
     //void OnDrawGizmos(){

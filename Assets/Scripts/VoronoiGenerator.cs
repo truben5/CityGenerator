@@ -17,6 +17,7 @@ public class VoronoiGenerator : MonoBehaviour {
     void Start()
     {
         GenerateVoronoi();
+        AddRoads();
         AddBuildings();
 
     }
@@ -49,6 +50,14 @@ public class VoronoiGenerator : MonoBehaviour {
             points.Add(new Vector2f(Random.Range(0, length), Random.Range(0, width)));
         }
         return points;
+    }
+
+    private void AddRoads()
+    {
+        for (int i = 0; i < cells.Count; i++)
+        {
+            cells[i].GetComponent<VoronoiCell>().CellShrink();
+        }
     }
 
     // Makes buildings in cells
