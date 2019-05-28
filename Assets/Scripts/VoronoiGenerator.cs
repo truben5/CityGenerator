@@ -76,7 +76,8 @@ public class VoronoiGenerator : MonoBehaviour {
         for (int i=0; i < cells.Count; i++)
         {
             List<List<Vector2f>> cellBuildings = new List<List<Vector2f>>();
-            cellBuildings.Add(cells[i].GetComponent<VoronoiCell>().GetCellVertices());
+            // Use the vertices for buildings because they provide room for roads
+            cellBuildings.Add(cells[i].GetComponent<VoronoiCell>().GetVerticesForBuildings());
             //for (int j=0; j < cellVertices.Count; j++)
             //{
             //    Debug.Log("Cell " + i + ": " + cellVertices[j].x + ", " + cellVertices[j].y);

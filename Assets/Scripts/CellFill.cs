@@ -358,14 +358,14 @@ public class CellFill : MonoBehaviour {
         }
     }
 
-    void OnDrawGizmos()
-    {
-        //Debug.Log(buildingVertices);
-        Gizmos.color = Color.red;
-        for (int i = 0; i < buildingLines.Count; i++)
-        {
-            Gizmos.DrawLine(buildingLines[i].getStart(), buildingLines[i].getEnd());
-        }
-    }
+    //void OnDrawGizmos()
+    //{
+    //    //Debug.Log(buildingVertices);
+    //    Gizmos.color = Color.red;
+    //    for (int i = 0; i < buildingLines.Count; i++)
+    //    {
+    //        Gizmos.DrawLine(buildingLines[i].getStart(), buildingLines[i].getEnd());
+    //    }
+    //}
 }
 
