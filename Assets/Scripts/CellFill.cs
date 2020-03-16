@@ -12,10 +12,8 @@ public class CellFill : MonoBehaviour {
     // until all sides are smaller or equal to max length
     public List<List<Vector2f>> MakeBuildings(List<List<Vector2f>> cellPlot, int maxLength)
     {
-        //Debug.Log("Starting MakeBuildings");
         cellPlot = MakeBuildingShapes(cellPlot, maxLength, 0);
 
-        //Debug.Log("For debugging");
         for (int i=0; i < cellPlot.Count; i++)
         {
             for (int j = 0; j < cellPlot[i].Count; j++)
@@ -38,7 +36,6 @@ public class CellFill : MonoBehaviour {
                 //Debug.Log("Distance between " + cellPlot[i][j] + " and " + cellPlot[i][k]);
                 if (TooBig(cellPlot[i][j], cellPlot[i][k], maxLength))
                 {
-                    //Debug.Log("Too big");
                     //Debug.Log("j = " + j + " k = " + k);
                     List<List<Vector2f>> splitPlot = BisectCell(cellPlot[i], maxLength, 0, j, k);
                     cellPlot[i] = splitPlot[0];
@@ -67,7 +64,6 @@ public class CellFill : MonoBehaviour {
         Vector2f nextLinePoint;
         if (double.IsInfinity(invSlope))
         {
-            //Debug.Log("infinity is invslope");
             nextLinePoint = new Vector2f(midPoint.x, midPoint.y + 1);
         }
         else
@@ -76,9 +72,7 @@ public class CellFill : MonoBehaviour {
             nextLinePoint = new Vector2f(midPoint.x + 1, midPoint.y + invSlope);
         }
         List<int> intersectingSeg = LineIntersection(segStartInd, midPoint, invSlope, myPlot);
-        //Debug.Log("Next line point:" + nextLinePoint.x + " " + nextLinePoint.y);
-        //Debug.Log("line segment intersected:" + intersectingSeg[0] + " " +  intersectingSeg[1]);
-        //StructureLine wall;
+
         bool intersectIsVertex = false;
         Vector2f intersection;
         if (intersectingSeg.Count == 1)
@@ -111,17 +105,14 @@ public class CellFill : MonoBehaviour {
         List<Vector2f> plot1 = new List<Vector2f>();
         List<Vector2f> plot2 = new List<Vector2f>();
         bool first = true;
-        //Debug.Log("splitting plot");
         for (int i = 0; i < vertices.Count; i++)
         {
             if (first && i != bisectorInd && i != intersectionInd)
             {
-                //Debug.Log("case1");
                 plot1.Add(vertices[i]);
             }
             else if (first && i == bisectorInd)
             {
-                //Debug.Log("case2");
                 plot1.Add(vertices[i]);
                 plot1.Add(bisector);
                 plot1.Add(intersection);
@@ -131,7 +122,6 @@ public class CellFill : MonoBehaviour {
             }
             else if (first && i == intersectionInd && !intersectIsVertex)
             {
-                //Debug.Log("case3");
                 plot1.Add(vertices[i]);
                 plot1.Add(intersection);
                 plot1.Add(bisector);
@@ -139,19 +129,16 @@ public class CellFill : MonoBehaviour {
             }
             else if (first && i == intersectionInd && intersectIsVertex)
             {
-                //Debug.Log("case4");
                 plot1.Add(intersection);
                 plot1.Add(bisector);
                 first = false;
             }
             else if (!first && i != bisectorInd && i != intersectionInd)
             {
-                //Debug.Log("case5");
                 plot2.Add(vertices[i]);
             }
             else if (!first && i == bisectorInd)
             {
-                //Debug.Log("case6");
                 plot2.Add(vertices[i]);
                 plot2.Add(bisector);
                 plot2.Add(intersection);
@@ -159,7 +146,6 @@ public class CellFill : MonoBehaviour {
             }
             else if (!first && i == intersectionInd && !intersectIsVertex)
             {
-                //Debug.Log("case7");
                 plot2.Add(vertices[i]);
                 plot2.Add(intersection);
                 //plot2.Add(bisector);
@@ -167,7 +153,6 @@ public class CellFill : MonoBehaviour {
             }
             else if (!first && i == intersectionInd && intersectIsVertex)
             {
-                //Debug.Log("case8");
                 plot2.Add(intersection);
             }
             else
@@ -213,7 +198,6 @@ public class CellFill : MonoBehaviour {
     public Vector2f Midpoint(float x1, float y1, float x2, float y2)
     {
         Vector2f mid = new Vector2f((x1 + x2)/2.0, (y1 + y2)/2.0);
-        //Debug.Log("Midpoint :" + mid.x + ", " + mid.y);
         return mid;
     } 
 
@@ -221,7 +205,6 @@ public class CellFill : MonoBehaviour {
     public float Slope(float x1, float y1, float x2, float y2)
     {
         float slope = (y2 - y1)/(x2 - x1);
-        //Debug.Log("slope: " + slope);
         return slope;
     }
 
@@ -242,7 +225,6 @@ public class CellFill : MonoBehaviour {
         List<int> plotIntersection = new List<int>();
 
         //float segmentAngle = Mathf.Rad2Deg * Mathf.Atan(slope);
-        //Debug.Log("Starting line intersection");
         int trend = -1;
         int location = -1;
         for (int i = startInd; i < plot.Count + startInd; i++)
@@ -318,7 +300,6 @@ public class CellFill : MonoBehaviour {
         float resultY;
         if (double.IsInfinity(m))
         {
-            //Debug.Log("b is infinity");
             if (midPointX < p.x)
             {
                 return 0;

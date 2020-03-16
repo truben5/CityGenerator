@@ -1,3 +1,6 @@
-[submodule "Assets\\Scripts\\cdDelaunay"]
-	path = Assets\\Scripts\\cdDelaunay
+[submodule "Submodules/csDelaunay"]
+	path = Submodules/csDelaunay
+	url = https://github.com/PouletFrit/csDelaunay.git
+[submodule "Assets/Resources/Libraries/csDelaunay"]
+	path = Assets/Resources/Libraries/csDelaunay
 	url = https://github.com/PouletFrit/csDelaunay.git

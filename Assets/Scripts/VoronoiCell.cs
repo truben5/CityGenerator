@@ -78,23 +78,23 @@ public class VoronoiCell : MonoBehaviour {
 
         for (int i = 0; i < cellBuildings.Count; i++)
         {
-            instanceCellBuilding = Instantiate(cellBuilding);
-            instanceCellBuilding.transform.parent = buildings.transform;
-            instanceCellBuilding.name = "building " + i;
-            instanceCellBuilding.GetComponent<Building>().SetVertices(cellBuildings[i]);
-
-            // Sets position to the center of the building polygon
-            Vector2f center = instanceCellBuilding.GetComponent<Building>().GetCenter();
-            instanceCellBuilding.transform.position = new Vector3(center.x, center.y, 0);
-            // Debugging
-            //List<Vector2f> vertices = instanceCellBuilding.GetComponent<Building>().GetVertices();
-            //for (int j = 0; j < vertices.Count; j++)
-            //{
-            //    Debug.Log(vertices[j].x + ", " + vertices[j].y);
-            //}
-
-            buildingsList.Add(instanceCellBuilding);
+            InstantiateBuilding(buildings, cellBuildings[i], i);
         }
+    }
+
+    // Creates game object instance of building and sets position to the center of the building vertices
+    public void InstantiateBuilding(GameObject buildingListObject, List<Vector2f> cellBuildingPlot, int buildingNum)
+    {
+        instanceCellBuilding = Instantiate(cellBuilding);
+        instanceCellBuilding.transform.parent = buildingListObject.transform;
+        instanceCellBuilding.name = "building " + buildingNum;
+        instanceCellBuilding.GetComponent<Building>().SetVertices(cellBuildingPlot);
+
+        // Sets position to the center of the building polygon
+        Vector2f center = instanceCellBuilding.GetComponent<Building>().GetCenter();
+        instanceCellBuilding.transform.position = new Vector3(center.x, center.y, 0);
+
+        buildingsList.Add(instanceCellBuilding);
     }
 
     // Find the average x and y value from the cell to find the centroid
@@ -111,8 +111,6 @@ public class VoronoiCell : MonoBehaviour {
 
         centroid.x = xSum / vertices.Count;
         centroid.y = ySum / vertices.Count;
-
-        //return new Vector2f(xSum / vertices.Count, ySum / vertices.Count);
     }
 
     public Vector2f GetCentroid()
@@ -137,7 +135,6 @@ public class VoronoiCell : MonoBehaviour {
                 Vector3 endVector = new Vector3(vertices[k].x, vertices[k].y, 0);
                 Gizmos.DrawLine(startVector, endVector);
             }
-
         }
     }
 }
