@@ -78,12 +78,13 @@ public class VoronoiCell : MonoBehaviour {
 
         for (int i = 0; i < cellBuildings.Count; i++)
         {
-            InstantiateBuilding(buildings, cellBuildings[i], i);
+            GameObject buildingObject = InstantiateBuilding(buildings, cellBuildings[i], i);
+            buildingObject.GetComponent<Building>().CreateBuildingMesh();
         }
     }
 
     // Creates game object instance of building and sets position to the center of the building vertices
-    public void InstantiateBuilding(GameObject buildingListObject, List<Vector2f> cellBuildingPlot, int buildingNum)
+    public GameObject InstantiateBuilding(GameObject buildingListObject, List<Vector2f> cellBuildingPlot, int buildingNum)
     {
         instanceCellBuilding = Instantiate(cellBuilding);
         instanceCellBuilding.transform.parent = buildingListObject.transform;
@@ -95,6 +96,7 @@ public class VoronoiCell : MonoBehaviour {
         instanceCellBuilding.transform.position = new Vector3(center.x, center.y, 0);
 
         buildingsList.Add(instanceCellBuilding);
+        return instanceCellBuilding;
     }
 
     // Find the average x and y value from the cell to find the centroid
@@ -126,7 +128,7 @@ public class VoronoiCell : MonoBehaviour {
         for (int i = 0; i < buildingsList.Count; i++)
         {
             //Debug.Log("Outer Loop");
-            List<Vector2f> vertices = buildingsList[i].GetComponent<Building>().GetVertices();
+            List<Vector2f> vertices = buildingsList[i].GetComponent<Building>().GetTwoDimensionVertices();
             for (int j = 0; j < vertices.Count; j++)
             {
                 //Debug.Log("Inner loop");

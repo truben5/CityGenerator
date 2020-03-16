@@ -3,16 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-[RequireComponent(typeof(MeshFilter))]
 public class MeshGenerator : MonoBehaviour {
-
-    private MeshFilter filter;
-
-    void Start()
-    {
-        filter = GetComponent<MeshFilter>();
-        //filter.mesh = CreateMesh();
-    }
 
     // Uses the buidling vertices to create a building mesh
    /* public Mesh CreateMesh(IEnumerable<Vector3> points)

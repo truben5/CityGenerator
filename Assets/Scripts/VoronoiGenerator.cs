@@ -76,7 +76,6 @@ public class VoronoiGenerator : MonoBehaviour {
     // Makes buildings in cells
     private void AddBuildings()
     {
-        // Change back to cells.Count after testing
         for (int i=0; i < cells.Count; i++)
         {
             List<List<Vector2f>> cellBuildings = new List<List<Vector2f>>();
