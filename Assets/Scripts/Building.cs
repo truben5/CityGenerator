@@ -10,6 +10,8 @@ public class Building : MonoBehaviour {
 
     private List<Vector3> threeDimensionVertices = new List<Vector3>();
 
+    private int height = 40;
+
     // Sets vertices for buildings as Vector3 and call CreateMesh
     public void SetVertices(List<Vector2f> buildingVertices)
     {
@@ -40,48 +42,56 @@ public class Building : MonoBehaviour {
 
         Mesh mesh = new Mesh();
 
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> tris = new List<int>();
+        List<Vector3> normals = new List<Vector3>();
+        List<Vector2> uv = new List<Vector2>();
 
-        // TODO: Replace this with building vertices
-        Vector3[] vertices = new Vector3[4]
+        for (int i = 0; i < threeDimensionVertices.Count; i++)
         {
-            new Vector3(0, 0, 0),
-            new Vector3(1, 0, 0),
-            new Vector3(0, 1, 0),
-            new Vector3(1, 1, 0)
-        };
-        mesh.vertices = vertices;
+            CalculateMeshWall(threeDimensionVertices[i], threeDimensionVertices[(i + 1) % threeDimensionVertices.Count], vertices, tris, normals, uv);
+        }
 
-        // TODO: Look into this property, may need to alter based on vertices
-        int[] tris = new int[6]
-        {
-            // lower left triangle
-            0, 2, 1,
-            // upper right triangle
-            2, 3, 1
-        };
-        mesh.triangles = tris;
+        mesh.vertices = vertices.ToArray();
 
-        // TODO: Look into this property, may need to alter based on vertices
-        Vector3[] normals = new Vector3[4]
-        {
-            -Vector3.forward,
-            -Vector3.forward,
-            -Vector3.forward,
-            -Vector3.forward
-        };
-        mesh.normals = normals;
+        mesh.triangles = tris.ToArray();
 
-        // TODO: Look into this property, may need to alter based on vertices
-        Vector2[] uv = new Vector2[4]
-        {
-            new Vector2(0, 0),
-            new Vector2(1, 0),
-            new Vector2(0, 1),
-            new Vector2(1, 1)
-        };
-        mesh.uv = uv;
+        mesh.normals = normals.ToArray();
+
+        mesh.uv = uv.ToArray();
+
+        //mesh.RecalculateNormals();
 
         meshFilter.mesh = mesh;
+    }
+
+    public void CalculateMeshWall(Vector3 v1, Vector3 v2, List<Vector3> vertices, List<int> tris, List<Vector3> normals, List<Vector2> uv)
+    {
+        Vector3 v3 = v2 + new Vector3(0, 0, height);
+        Vector3 v4 = v1 + new Vector3(0, 0, height);
+
+        vertices.Add(v1);
+        vertices.Add(v2);
+        vertices.Add(v3);
+        vertices.Add(v4);
+
+        tris.Add(vertices.IndexOf(v1));
+        tris.Add(vertices.IndexOf(v2));
+        tris.Add(vertices.IndexOf(v3));
+
+        tris.Add(vertices.IndexOf(v3));
+        tris.Add(vertices.IndexOf(v4));
+        tris.Add(vertices.IndexOf(v1));
+
+        normals.Add(-Vector3.forward);
+        normals.Add(-Vector3.forward);
+        normals.Add(-Vector3.forward);
+        normals.Add(-Vector3.forward);
+
+        uv.Add((Vector2)v1);
+        uv.Add((Vector2)v2);
+        uv.Add((Vector2)v3);
+        uv.Add((Vector2)v4);
     }
 
     public List<Vector2f> GetTwoDimensionVertices()
