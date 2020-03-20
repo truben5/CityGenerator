@@ -69,31 +69,28 @@ public class Building : MonoBehaviour {
     // Adds a quad representing a wall between the two points passed in
     public void AddMeshWall(Vector3 v1, Vector3 v2, List<Vector3> meshVertices, List<int> tris, List<Vector3> normals, List<Vector2> uv)
     {
-        Vector3 v3 = v2 + new Vector3(0, 0, height);
-        Vector3 v4 = v1 + new Vector3(0, 0, height);
 
-        meshVertices.Add(v1);
-        meshVertices.Add(v2);
-        meshVertices.Add(v3);
-        meshVertices.Add(v4);
+        Vector3[] vectors = {   v1, 
+                                v2, 
+                                v2 + new Vector3(0, 0, height), 
+                                v1 + new Vector3(0, 0, height) 
+        };
 
-        tris.Add(meshVertices.IndexOf(v1));
-        tris.Add(meshVertices.IndexOf(v2));
-        tris.Add(meshVertices.IndexOf(v3));
+        for (int i = 0; i < 4; i++)
+        {
+            meshVertices.Add(vectors[i]);
+            normals.Add(-Vector3.forward);
+            uv.Add((Vector2)vectors[i]);
+        }
 
-        tris.Add(meshVertices.IndexOf(v3));
-        tris.Add(meshVertices.IndexOf(v4));
-        tris.Add(meshVertices.IndexOf(v1));
+        // Add triangle for quad
+        tris.Add(meshVertices.IndexOf(vectors[0]));
+        tris.Add(meshVertices.IndexOf(vectors[1]));
+        tris.Add(meshVertices.IndexOf(vectors[2]));
 
-        normals.Add(-Vector3.forward);
-        normals.Add(-Vector3.forward);
-        normals.Add(-Vector3.forward);
-        normals.Add(-Vector3.forward);
-
-        uv.Add((Vector2)v1);
-        uv.Add((Vector2)v2);
-        uv.Add((Vector2)v3);
-        uv.Add((Vector2)v4);
+        tris.Add(meshVertices.IndexOf(vectors[2]));
+        tris.Add(meshVertices.IndexOf(vectors[3]));
+        tris.Add(meshVertices.IndexOf(vectors[0]));
     }
 
     // Uses the floor vertices to add a mesh to the top of the building
@@ -113,14 +110,12 @@ public class Building : MonoBehaviour {
             // Determine triangles based on if it is first triangle or not
             if (i == 2)
             {
-                // Need to fix this
                 tris.Add(startIndex);
                 tris.Add(startIndex + 1);
                 tris.Add(startIndex + 2);
             }
             else if (i > 2)
             {
-                // need to fix this, wrong index
                 tris.Add(startIndex);
                 tris.Add(currIndex - 1);
                 tris.Add(currIndex);

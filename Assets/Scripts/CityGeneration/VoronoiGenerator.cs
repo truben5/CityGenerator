@@ -42,7 +42,6 @@ public class VoronoiGenerator : MonoBehaviour {
             Vector2f centroid = voronoiCell.GetComponent<VoronoiCell>().GetCentroid();
             voronoiCell.transform.position = new Vector3(centroid.x, centroid.y, 0);
 
-            //Debug.Log(this.cells);
             cells.Add(voronoiCell);
         }
     }
@@ -65,15 +64,7 @@ public class VoronoiGenerator : MonoBehaviour {
             cells[i].GetComponent<VoronoiCell>().CellShrink(roadWidth);
         }
     }
-    // Make space between each cell for the roads
-   /* private void createRoads()
-    {
-        for (int i = 0; i < cells.Count; i++)
-        {
-            cells[i].GetComponent<VoronoiCell>().MakeRoadSpace();
-        }
-    }
-    */
+
     // Makes buildings in cells
     private void AddBuildings()
     {
@@ -82,10 +73,7 @@ public class VoronoiGenerator : MonoBehaviour {
             List<List<Vector2f>> cellBuildings = new List<List<Vector2f>>();
             // Use the vertices for buildings because they provide room for roads
             cellBuildings.Add(cells[i].GetComponent<VoronoiCell>().GetVerticesForBuildings());
-            //for (int j=0; j < cellVertices.Count; j++)
-            //{
-            //    Debug.Log("Cell " + i + ": " + cellVertices[j].x + ", " + cellVertices[j].y);
-            //}
+
             cells[i].GetComponent<VoronoiCell>().SetBuildings(cells[i].GetComponent<CellFill>().MakeBuildings(cellBuildings, maxLength));
         }
     }

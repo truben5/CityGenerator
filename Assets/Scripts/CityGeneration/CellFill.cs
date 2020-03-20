@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CellFill : MonoBehaviour {
 
-    //List<Vector2f> shapeToFill = new List<Vector2f>();
     private List<Vector2f> buildingsPoints = new List<Vector2f>();
     private List<StructureLine> buildingLines = new List<StructureLine>();
 
@@ -19,7 +18,6 @@ public class CellFill : MonoBehaviour {
             for (int j = 0; j < cellPlot[i].Count; j++)
             {
                 int k = (j + 1) % cellPlot[i].Count;
-                //Debug.Log("i = " + i + " j = " + j + " k = " + k);
                 StructureLine line = new StructureLine(cellPlot[i][j], cellPlot[i][k]);
                 buildingLines.Add(line);
             }
@@ -33,10 +31,8 @@ public class CellFill : MonoBehaviour {
             for (int j = 0; j < cellPlot[i].Count; j++)
             {
                 int k = (j + 1) % cellPlot[i].Count;
-                //Debug.Log("Distance between " + cellPlot[i][j] + " and " + cellPlot[i][k]);
                 if (TooBig(cellPlot[i][j], cellPlot[i][k], maxLength))
                 {
-                    //Debug.Log("j = " + j + " k = " + k);
                     List<List<Vector2f>> splitPlot = BisectCell(cellPlot[i], maxLength, 0, j, k);
                     cellPlot[i] = splitPlot[0];
                     cellPlot.Insert(i+1, splitPlot[1]);
@@ -68,7 +64,6 @@ public class CellFill : MonoBehaviour {
         }
         else
         {
-            //Debug.Log("Next point of bisector is: midPoint.x + 1, midPoint.y + " + invSlope);
             nextLinePoint = new Vector2f(midPoint.x + 1, midPoint.y + invSlope);
         }
         List<int> intersectingSeg = LineIntersection(segStartInd, midPoint, invSlope, myPlot);
@@ -77,7 +72,6 @@ public class CellFill : MonoBehaviour {
         Vector2f intersection;
         if (intersectingSeg.Count == 1)
         {
-            //wall = new StructureLine(midPoint, myPlot[intersectingSeg[0]]);
             intersection = myPlot[intersectingSeg[0]];
             intersectIsVertex = true;
         }
@@ -85,14 +79,9 @@ public class CellFill : MonoBehaviour {
         {
             intersection = Intersection(midPoint, nextLinePoint, myPlot[intersectingSeg[0]], 
             myPlot[intersectingSeg[1]]);
-
-            //wall = new StructureLine(midPoint, intersection);
         }
 
         List<List<Vector2f>> resultShapes = SplitPlotArray(buildingShape, midPoint, segStartInd, intersection, intersectingSeg[0], intersectIsVertex);
-
-        //buildings.Add(wall);
-        //buildingLines.Add(wall);
 
         return resultShapes;
 
@@ -148,7 +137,6 @@ public class CellFill : MonoBehaviour {
             {
                 plot2.Add(vertices[i]);
                 plot2.Add(intersection);
-                //plot2.Add(bisector);
                 first = true;
             }
             else if (!first && i == intersectionInd && intersectIsVertex)
@@ -160,15 +148,7 @@ public class CellFill : MonoBehaviour {
                 throw new System.Exception("Unthought of case");
             }
         }
-        ////for debugging
-        //for (int i = 0; i < plot1.Count; i++)
-        //    {
-        //        Debug.Log("plot1 ind " + i + " is: " + plot1[i]);
-        //    }
-        //for (int j = 0; j < plot2.Count; j++)
-        //{
-        //    Debug.Log("Plot2 ind " + j + " is " + plot2[j]);
-        //}
+
         newBuildings.Add(plot1);
         newBuildings.Add(plot2);
         return newBuildings;
@@ -186,7 +166,7 @@ public class CellFill : MonoBehaviour {
     public bool TooBig(Vector2f start, Vector2f end, int maxLength)
     {
         float dist = Distance(start.x, start.y, end.x, end.y);
-        //Debug.Log("Distance is: " + dist);
+
         if (dist > maxLength)
         {
             return true;
@@ -212,7 +192,6 @@ public class CellFill : MonoBehaviour {
     public float InvSlope(float slope)
     {
         float invSlope = -1 * (1 / slope);
-        //Debug.Log("inv slope: " + invSlope);
         return invSlope;
     }
 
@@ -234,7 +213,7 @@ public class CellFill : MonoBehaviour {
             int l = (i + 1) % plot.Count;
 
             float b = midPoint.y - invSlope * midPoint.x;
-            //Debug.Log("trend is: " + trend + " and location is: " + location);
+
             location = LocationToLine(invSlope, b, plot[l], midPoint.x);
             if (trend == 2)
             {
@@ -248,25 +227,19 @@ public class CellFill : MonoBehaviour {
                     plotIntersection.Add(l);
                     return plotIntersection;
                 }
-                //Debug.Log("Crosses bisector line");
-                //Debug.Log("intersects between " + j + " and " + l);
+
                 plotIntersection.Add(j);
                 plotIntersection.Add(l);
                 return plotIntersection;
             }
             trend = location;
-            //Debug.Log("Trend and location are now: " + trend + " and " + location);
         }
-        //Debug.Log("Returning nothing");
         return plotIntersection;
     }
 
     // Finds point of intersection two lines
     public Vector2f Intersection(Vector2f s1, Vector2f e1, Vector2f s2, Vector2f e2)
     {
-        //Debug.Log("intersection of: " + s1 + " and " + e1 + " with " + 
-          //  s2 + " and " + e2);
-
         // Line represented as a1x + b1y = c1
         float a1 = e1.y - s1.y;
         float b1 = s1.x - e1.x;
@@ -277,8 +250,6 @@ public class CellFill : MonoBehaviour {
         float b2 = s2.x - e2.x;
         float c2 = a2 * s2.x + b2 * s2.y;
 
-        //Debug.Log("a1: " + a1 + " b1: " + b1 + " c1: " + c1 + " a2: " + a2 + " b2: " + b2 + " c2: " + c2);
-
         float determinant = a1 * b2 - a2 * b1;
 
         if(determinant == 0)
@@ -288,7 +259,6 @@ public class CellFill : MonoBehaviour {
 
         double x = (b2 * c1 - b1 * c2) / determinant;
         double y = (a1 * c2 - a2 * c1) / determinant;
-        //Debug.Log("Intersection point is: " + x + ", " + y);
         return new Vector2f(x,y);
     }
 
@@ -296,7 +266,6 @@ public class CellFill : MonoBehaviour {
     // If the slope is infinite (vertical line) uses the x values to determine if point is right or left of line
     public int LocationToLine(float m, float b, Vector2f p, float midPointX)
     {
-        //Debug.Log("Equation of line is: y = " + m + "x + " + b);
         float resultY;
         if (double.IsInfinity(m))
         {

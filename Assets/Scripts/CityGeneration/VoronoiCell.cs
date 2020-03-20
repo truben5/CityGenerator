@@ -62,7 +62,6 @@ public class VoronoiCell : MonoBehaviour {
             diffVector.y = vertices[i].y - centroid.y;
             diffVector.Normalize();
 
-            //vertices[i] = new Vector2f(vertices[i].x - roadWidth*diffVector.x, vertices[i].y - roadWidth*diffVector.y);
             verticesForBuildings.Add(new Vector2f(vertices[i].x - roadWidth * diffVector.x, vertices[i].y - roadWidth * diffVector.y));
         }
     }

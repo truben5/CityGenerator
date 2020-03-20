@@ -184,7 +184,7 @@ MonoBehaviour:
   width: 500
   length: 500
   maxLength: 30
-  roadWidth: 15
+  roadWidth: 8
   voronoiCell: {fileID: 1582214741797256, guid: 6ae2feabd00ed8846a03d5cc2145bdda,
     type: 3}
   parentDiagram: {fileID: 992234816}
