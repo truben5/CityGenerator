@@ -184,6 +184,7 @@ MonoBehaviour:
   width: 500
   length: 500
   maxLength: 30
+  roadWidth: 15
   voronoiCell: {fileID: 1582214741797256, guid: 6ae2feabd00ed8846a03d5cc2145bdda,
     type: 3}
   parentDiagram: {fileID: 992234816}
@@ -286,13 +287,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1755331083}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalRotation: {x: 0.96281445, y: -0.020757027, z: 0.25798532, w: 0.07746629}
+  m_LocalPosition: {x: -65, y: 636, z: 113}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 170.8, y: -30, z: 0}
 --- !u!1 &1981487924
 GameObject:
   m_ObjectHideFlags: 0
@@ -370,13 +371,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1981487924}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 521, y: 1, z: -460}
+  m_LocalRotation: {x: 0.0011414454, y: -0.997707, z: 0.0653932, w: 0.017415084}
+  m_LocalPosition: {x: 510, y: 765, z: 753}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 7.5, y: -178, z: 0}
 --- !u!114 &1981487928
 MonoBehaviour:
   m_ObjectHideFlags: 0

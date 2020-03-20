@@ -50,12 +50,11 @@ public class VoronoiCell : MonoBehaviour {
     }
 
     // Pulls in all edges of polygons to create room for roads
-    public void CellShrink()
+    public void CellShrink(int roadWidth)
     {
         //Vector2f centroid = CalculateCentroid();
         Vector2f diffVector = new Vector2f();
 
-        int roadWidth = 3;
         // Uses centroid to move vertices 1 closer to centroid
         for (int i = 0; i < vertices.Count; i++)
         {
@@ -122,16 +121,12 @@ public class VoronoiCell : MonoBehaviour {
 
     void OnDrawGizmos()
     {
-        //Debug.Log("Draw Gizmos");
         Gizmos.color = Color.red;
-        //Debug.Log(buildings.Count);
         for (int i = 0; i < buildingsList.Count; i++)
         {
-            //Debug.Log("Outer Loop");
             List<Vector2f> vertices = buildingsList[i].GetComponent<Building>().GetTwoDimensionVertices();
             for (int j = 0; j < vertices.Count; j++)
             {
-                //Debug.Log("Inner loop");
                 int k = (j + 1) % vertices.Count;
                 Vector3 startVector = new Vector3(vertices[j].x, vertices[j].y, 0);
                 Vector3 endVector = new Vector3(vertices[k].x, vertices[k].y, 0);

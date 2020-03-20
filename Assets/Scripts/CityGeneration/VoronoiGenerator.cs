@@ -9,6 +9,7 @@ public class VoronoiGenerator : MonoBehaviour {
     public int width;
     public int length;
     public int maxLength;
+    public int roadWidth;
     public GameObject voronoiCell;
     public GameObject parentDiagram;
 
@@ -61,7 +62,7 @@ public class VoronoiGenerator : MonoBehaviour {
     {
         for (int i = 0; i < cells.Count; i++)
         {
-            cells[i].GetComponent<VoronoiCell>().CellShrink();
+            cells[i].GetComponent<VoronoiCell>().CellShrink(roadWidth);
         }
     }
     // Make space between each cell for the roads
