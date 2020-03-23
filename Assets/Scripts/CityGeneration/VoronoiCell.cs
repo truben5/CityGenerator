@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class VoronoiCell : MonoBehaviour {
 
-    private List<Vector2f> vertices = new List<Vector2f>();
-    private List<Vector2f> verticesForBuildings = new List<Vector2f>();
+    private List<Vector2f> cellVertices = new List<Vector2f>();
     private List<GameObject> buildingsList = new List<GameObject>();
 
     private Vector2f centroid = new Vector2f();
@@ -15,15 +14,10 @@ public class VoronoiCell : MonoBehaviour {
 
     public List<Vector2f> GetCellVertices()
     {
-        return this.vertices;
+        return this.cellVertices;
     }
 
-    public List<Vector2f> GetVerticesForBuildings()
-    {
-        return this.verticesForBuildings;
-    }
-
-    // Sets vertices of voronoi cell
+    // Sets vertices of voronoi cell and calculates centroid
     public void SetCellVertices(List<Vector2f> regionVertices)
     {
 
@@ -32,15 +26,13 @@ public class VoronoiCell : MonoBehaviour {
 
         for (int i = 0; i < regionVertices.Count; i++)
         {
-            vertices.Add(regionVertices[i]);
+            cellVertices.Add(regionVertices[i]);
             xSum += regionVertices[i].x;
             ySum += regionVertices[i].y;
         }
 
         centroid.x = xSum / regionVertices.Count;
         centroid.y = ySum / regionVertices.Count;
-
-        //Debug.Log(vertices[0]);
     }
 
     // Returns list of all buildings contained in cell
@@ -52,17 +44,16 @@ public class VoronoiCell : MonoBehaviour {
     // Pulls in all edges of polygons to create room for roads
     public void CellShrink(int roadWidth)
     {
-        //Vector2f centroid = CalculateCentroid();
         Vector2f diffVector = new Vector2f();
 
-        // Uses centroid to move vertices 1 closer to centroid
-        for (int i = 0; i < vertices.Count; i++)
+        // Uses centroid to move vertices closer to centroid
+        for (int i = 0; i < cellVertices.Count; i++)
         {
-            diffVector.x = vertices[i].x - centroid.x;
-            diffVector.y = vertices[i].y - centroid.y;
+            diffVector.x = cellVertices[i].x - centroid.x;
+            diffVector.y = cellVertices[i].y - centroid.y;
             diffVector.Normalize();
 
-            verticesForBuildings.Add(new Vector2f(vertices[i].x - roadWidth * diffVector.x, vertices[i].y - roadWidth * diffVector.y));
+            cellVertices[i] = new Vector2f(cellVertices[i].x - roadWidth * diffVector.x, cellVertices[i].y - roadWidth * diffVector.y);
         }
     }
 
@@ -91,26 +82,11 @@ public class VoronoiCell : MonoBehaviour {
 
         // Sets position to the center of the building polygon
         Vector2f center = instanceCellBuilding.GetComponent<Building>().GetCenter();
-        instanceCellBuilding.transform.position = new Vector3(center.x, center.y, 0);
+
+        instanceCellBuilding.transform.position = new Vector3();
 
         buildingsList.Add(instanceCellBuilding);
         return instanceCellBuilding;
-    }
-
-    // Find the average x and y value from the cell to find the centroid
-    private void CalculateCentroid()
-    {
-        float xSum = 0;
-        float ySum = 0;
-
-        for (int i = 0; i < vertices.Count; i++)
-        {
-            xSum += vertices[i].x;
-            ySum += vertices[i].y;
-        }
-
-        centroid.x = xSum / vertices.Count;
-        centroid.y = ySum / vertices.Count;
     }
 
     public Vector2f GetCentroid()
@@ -123,12 +99,14 @@ public class VoronoiCell : MonoBehaviour {
         Gizmos.color = Color.red;
         for (int i = 0; i < buildingsList.Count; i++)
         {
-            List<Vector2f> vertices = buildingsList[i].GetComponent<Building>().GetTwoDimensionVertices();
+            List<Vector3> vertices = buildingsList[i].GetComponent<Building>().GetFloorVertices();
             for (int j = 0; j < vertices.Count; j++)
             {
                 int k = (j + 1) % vertices.Count;
-                Vector3 startVector = new Vector3(vertices[j].x, vertices[j].y, 0);
-                Vector3 endVector = new Vector3(vertices[k].x, vertices[k].y, 0);
+
+                Vector3 startVector = vertices[j];
+                Vector3 endVector = vertices[k];
+
                 Gizmos.DrawLine(startVector, endVector);
             }
         }

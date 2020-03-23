@@ -72,7 +72,7 @@ public class VoronoiGenerator : MonoBehaviour {
         {
             List<List<Vector2f>> cellBuildings = new List<List<Vector2f>>();
             // Use the vertices for buildings because they provide room for roads
-            cellBuildings.Add(cells[i].GetComponent<VoronoiCell>().GetVerticesForBuildings());
+            cellBuildings.Add(cells[i].GetComponent<VoronoiCell>().GetCellVertices());
 
             cells[i].GetComponent<VoronoiCell>().SetBuildings(cells[i].GetComponent<CellFill>().MakeBuildings(cellBuildings, maxLength));
         }

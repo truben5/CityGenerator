@@ -105,6 +105,7 @@ public class Building : MonoBehaviour {
             // Add height to lift the position
             Vector3 roofVertex = floorVertices[i] + new Vector3(0, 0, height);
 
+
             vertices.Add(roofVertex);
 
             // Determine triangles based on if it is first triangle or not
@@ -130,6 +131,11 @@ public class Building : MonoBehaviour {
     public List<Vector2f> GetTwoDimensionVertices()
     {
         return twoDimensionVertices;
+    }
+
+    public List<Vector3> GetFloorVertices()
+    {
+        return floorVertices;
     }
 
     public Vector2f GetCenter()
