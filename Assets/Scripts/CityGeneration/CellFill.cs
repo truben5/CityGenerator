@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class CellFill : MonoBehaviour {
 
-    private List<Vector2f> buildingsPoints = new List<Vector2f>();
+    private List<Vector3> buildingsPoints = new List<Vector3>();
     private List<StructureLine> buildingLines = new List<StructureLine>();
 
     // Checks if any sides of plot are longer than max length. If so splits the polygon
     // until all sides are smaller or equal to max length
-    public List<List<Vector2f>> MakeBuildings(List<List<Vector2f>> cellPlot, int maxLength)
+    public List<List<Vector3>> MakeBuildings(List<List<Vector3>> cellPlot, int maxLength)
     {
         cellPlot = MakeBuildingShapes(cellPlot, maxLength, 0);
 
@@ -25,7 +25,7 @@ public class CellFill : MonoBehaviour {
         return cellPlot;
     }
 
-    public List<List<Vector2f>> MakeBuildingShapes(List<List<Vector2f>> cellPlot, int maxLength, int ptr)
+    public List<List<Vector3>> MakeBuildingShapes(List<List<Vector3>> cellPlot, int maxLength, int ptr)
     {
         for (int i = ptr; i < cellPlot.Count; i++)
             for (int j = 0; j < cellPlot[i].Count; j++)
@@ -33,7 +33,7 @@ public class CellFill : MonoBehaviour {
                 int k = (j + 1) % cellPlot[i].Count;
                 if (TooBig(cellPlot[i][j], cellPlot[i][k], maxLength))
                 {
-                    List<List<Vector2f>> splitPlot = BisectCell(cellPlot[i], maxLength, 0, j, k);
+                    List<List<Vector3>> splitPlot = BisectCell(cellPlot[i], maxLength, 0, j, k);
                     cellPlot[i] = splitPlot[0];
                     cellPlot.Insert(i+1, splitPlot[1]);
                     //Recursive Call
@@ -44,32 +44,32 @@ public class CellFill : MonoBehaviour {
     }
 
     // Splits cell into two shapes and returns the list of shapes
-    private List<List<Vector2f>> BisectCell(List<Vector2f> buildingShape, int maxLength,
+    private List<List<Vector3>> BisectCell(List<Vector3> buildingShape, int maxLength,
         int plotInd, int segStartInd, int segEndInd)
     {
-        List<Vector2f> myPlot = buildingShape;
+        List<Vector3> myPlot = buildingShape;
 
         float slope = Slope(myPlot[segStartInd].x, myPlot[segStartInd].y, myPlot[segEndInd].x,
             myPlot[segEndInd].y);
 
         float invSlope = InvSlope(slope);
 
-        Vector2f midPoint = Midpoint(myPlot[segStartInd].x, myPlot[segStartInd].y,
+        Vector3 midPoint = Midpoint(myPlot[segStartInd].x, myPlot[segStartInd].y,
             myPlot[segEndInd].x, myPlot[segEndInd].y);
 
-        Vector2f nextLinePoint;
+        Vector3 nextLinePoint;
         if (double.IsInfinity(invSlope))
         {
-            nextLinePoint = new Vector2f(midPoint.x, midPoint.y + 1);
+            nextLinePoint = new Vector3(midPoint.x, midPoint.y + 1);
         }
         else
         {
-            nextLinePoint = new Vector2f(midPoint.x + 1, midPoint.y + invSlope);
+            nextLinePoint = new Vector3(midPoint.x + 1, midPoint.y + invSlope);
         }
         List<int> intersectingSeg = LineIntersection(segStartInd, midPoint, invSlope, myPlot);
 
         bool intersectIsVertex = false;
-        Vector2f intersection;
+        Vector3 intersection;
         if (intersectingSeg.Count == 1)
         {
             intersection = myPlot[intersectingSeg[0]];
@@ -81,18 +81,18 @@ public class CellFill : MonoBehaviour {
             myPlot[intersectingSeg[1]]);
         }
 
-        List<List<Vector2f>> resultShapes = SplitPlotArray(buildingShape, midPoint, segStartInd, intersection, intersectingSeg[0], intersectIsVertex);
+        List<List<Vector3>> resultShapes = SplitPlotArray(buildingShape, midPoint, segStartInd, intersection, intersectingSeg[0], intersectIsVertex);
 
         return resultShapes;
 
     }
 
     // Splits array of vertices into two separate arrays representing individual buildings. Splits along perpendicular bisector
-    public List<List<Vector2f>> SplitPlotArray(List<Vector2f> vertices, Vector2f bisector, int bisectorInd, Vector2f intersection, int intersectionInd, bool intersectIsVertex)
+    public List<List<Vector3>> SplitPlotArray(List<Vector3> vertices, Vector3 bisector, int bisectorInd, Vector3 intersection, int intersectionInd, bool intersectIsVertex)
     {
-        List<List<Vector2f>> newBuildings = new List<List<Vector2f>>();
-        List<Vector2f> plot1 = new List<Vector2f>();
-        List<Vector2f> plot2 = new List<Vector2f>();
+        List<List<Vector3>> newBuildings = new List<List<Vector3>>();
+        List<Vector3> plot1 = new List<Vector3>();
+        List<Vector3> plot2 = new List<Vector3>();
         bool first = true;
         for (int i = 0; i < vertices.Count; i++)
         {
@@ -163,7 +163,7 @@ public class CellFill : MonoBehaviour {
         return dist;
     }
 
-    public bool TooBig(Vector2f start, Vector2f end, int maxLength)
+    public bool TooBig(Vector3 start, Vector3 end, int maxLength)
     {
         float dist = Distance(start.x, start.y, end.x, end.y);
 
@@ -175,9 +175,9 @@ public class CellFill : MonoBehaviour {
     }
 
     // Calculates midpoint between two points
-    public Vector2f Midpoint(float x1, float y1, float x2, float y2)
+    public Vector3 Midpoint(float x1, float y1, float x2, float y2)
     {
-        Vector2f mid = new Vector2f((x1 + x2)/2.0, (y1 + y2)/2.0);
+        Vector3 mid = new Vector3((x1 + x2)/2, (y1 + y2)/2, 0);
         return mid;
     } 
 
@@ -199,7 +199,7 @@ public class CellFill : MonoBehaviour {
     // Finds equation for perpendicular bisector. Plugs in x value of vertex in polygon to see if 
     // the point lies above or below the line.  When the orientation changes between above to below or 
     // vice versa, we know the intersection is between the 2 segments we were testing
-    public List<int> LineIntersection(int startInd,Vector2f midPoint, float invSlope, List<Vector2f> plot)
+    public List<int> LineIntersection(int startInd,Vector3 midPoint, float invSlope, List<Vector3> plot)
     {
         List<int> plotIntersection = new List<int>();
 
@@ -238,7 +238,7 @@ public class CellFill : MonoBehaviour {
     }
 
     // Finds point of intersection two lines
-    public Vector2f Intersection(Vector2f s1, Vector2f e1, Vector2f s2, Vector2f e2)
+    public Vector3 Intersection(Vector3 s1, Vector3 e1, Vector3 s2, Vector3 e2)
     {
         // Line represented as a1x + b1y = c1
         float a1 = e1.y - s1.y;
@@ -257,14 +257,14 @@ public class CellFill : MonoBehaviour {
             throw new System.Exception("Determinant is 0, lines are parallel");
         }
 
-        double x = (b2 * c1 - b1 * c2) / determinant;
-        double y = (a1 * c2 - a2 * c1) / determinant;
-        return new Vector2f(x,y);
+        float x = (b2 * c1 - b1 * c2) / determinant;
+        float y = (a1 * c2 - a2 * c1) / determinant;
+        return new Vector3(x,y,0);
     }
 
     // Takes in the slope and y intercept for a line equation.  Determines if point is below, above, or on line 
     // If the slope is infinite (vertical line) uses the x values to determine if point is right or left of line
-    public int LocationToLine(float m, float b, Vector2f p, float midPointX)
+    public int LocationToLine(float m, float b, Vector3 p, float midPointX)
     {
         float resultY;
         if (double.IsInfinity(m))

@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class VoronoiCell : MonoBehaviour {
 
-    private List<Vector2f> cellVertices = new List<Vector2f>();
+    private List<Vector3> cellVertices = new List<Vector3>();
     private List<GameObject> buildingsList = new List<GameObject>();
 
-    private Vector2f centroid = new Vector2f();
+    private Vector3 centroid = new Vector3();
 
     public GameObject cellBuilding;
     private GameObject instanceCellBuilding;
 
-    public List<Vector2f> GetCellVertices()
+    public List<Vector3> GetCellVertices()
     {
         return this.cellVertices;
     }
@@ -26,7 +26,10 @@ public class VoronoiCell : MonoBehaviour {
 
         for (int i = 0; i < regionVertices.Count; i++)
         {
-            cellVertices.Add(regionVertices[i]);
+            // Convert to Vector3 here
+            Vector3 vertex = new Vector3(regionVertices[i].x, regionVertices[i].y, 0);
+
+            cellVertices.Add(vertex);
             xSum += regionVertices[i].x;
             ySum += regionVertices[i].y;
         }
@@ -41,6 +44,11 @@ public class VoronoiCell : MonoBehaviour {
         return buildingsList;
     }
 
+    public void CreateRoads(int roadWidth)
+    {
+        CellShrink(roadWidth);
+    }
+
     // Pulls in all edges of polygons to create room for roads
     public void CellShrink(int roadWidth)
     {
@@ -53,12 +61,12 @@ public class VoronoiCell : MonoBehaviour {
             diffVector.y = cellVertices[i].y - centroid.y;
             diffVector.Normalize();
 
-            cellVertices[i] = new Vector2f(cellVertices[i].x - roadWidth * diffVector.x, cellVertices[i].y - roadWidth * diffVector.y);
+            cellVertices[i] = new Vector3(cellVertices[i].x - roadWidth * diffVector.x, cellVertices[i].y - roadWidth * diffVector.y, 0);
         }
     }
 
     // Takes in array of points and creates the building objects within a cell
-    public void SetBuildings(List<List<Vector2f>> cellBuildings)
+    public void SetBuildings(List<List<Vector3>> cellBuildings)
     {
 
         GameObject buildings = new GameObject();
@@ -73,7 +81,7 @@ public class VoronoiCell : MonoBehaviour {
     }
 
     // Creates game object instance of building and sets position to the center of the building vertices
-    public GameObject InstantiateBuilding(GameObject buildingListObject, List<Vector2f> cellBuildingPlot, int buildingNum)
+    public GameObject InstantiateBuilding(GameObject buildingListObject, List<Vector3> cellBuildingPlot, int buildingNum)
     {
         instanceCellBuilding = Instantiate(cellBuilding);
         instanceCellBuilding.transform.parent = buildingListObject.transform;
@@ -81,7 +89,7 @@ public class VoronoiCell : MonoBehaviour {
         instanceCellBuilding.GetComponent<Building>().SetVertices(cellBuildingPlot);
 
         // Sets position to the center of the building polygon
-        Vector2f center = instanceCellBuilding.GetComponent<Building>().GetCenter();
+        Vector3 center = instanceCellBuilding.GetComponent<Building>().GetCenter();
 
         instanceCellBuilding.transform.position = new Vector3();
 
@@ -89,26 +97,28 @@ public class VoronoiCell : MonoBehaviour {
         return instanceCellBuilding;
     }
 
-    public Vector2f GetCentroid()
+    public Vector3 GetCentroid()
     {
         return centroid;
     }
 
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        for (int i = 0; i < buildingsList.Count; i++)
-        {
-            List<Vector3> vertices = buildingsList[i].GetComponent<Building>().GetFloorVertices();
-            for (int j = 0; j < vertices.Count; j++)
-            {
-                int k = (j + 1) % vertices.Count;
 
-                Vector3 startVector = vertices[j];
-                Vector3 endVector = vertices[k];
+    // Gizmos to draw out all the buildings in red
+    //void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.red;
+    //    for (int i = 0; i < buildingsList.Count; i++)
+    //    {
+    //        List<Vector3> vertices = buildingsList[i].GetComponent<Building>().GetFloorVertices();
+    //        for (int j = 0; j < vertices.Count; j++)
+    //        {
+    //            int k = (j + 1) % vertices.Count;
 
-                Gizmos.DrawLine(startVector, endVector);
-            }
-        }
-    }
+    //            Vector3 startVector = vertices[j];
+    //            Vector3 endVector = vertices[k];
+
+    //            Gizmos.DrawLine(startVector, endVector);
+    //        }
+    //    }
+    //}
 }

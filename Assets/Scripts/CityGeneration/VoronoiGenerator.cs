@@ -10,10 +10,12 @@ public class VoronoiGenerator : MonoBehaviour {
     public int length;
     public int maxLength;
     public int roadWidth;
+    public bool walls;
     public GameObject voronoiCell;
     public GameObject parentDiagram;
 
     private List<GameObject> cells = new List<GameObject>();
+    private List<GameObject> roads = new List<GameObject>();
 
     void Start()
     {
@@ -39,7 +41,7 @@ public class VoronoiGenerator : MonoBehaviour {
             voronoiCell.name = "cell " + i;
             voronoiCell.GetComponent<VoronoiCell>().SetCellVertices(voronoi.Regions()[i]);
 
-            Vector2f centroid = voronoiCell.GetComponent<VoronoiCell>().GetCentroid();
+            Vector3 centroid = voronoiCell.GetComponent<VoronoiCell>().GetCentroid();
             voronoiCell.transform.position = new Vector3(centroid.x, centroid.y, 0);
 
             cells.Add(voronoiCell);
@@ -65,12 +67,22 @@ public class VoronoiGenerator : MonoBehaviour {
         }
     }
 
+    private void SetRoads()
+    {
+
+    }
+
+    private void FindConvexHull()
+    {
+
+    }
+
     // Makes buildings in cells
     private void AddBuildings()
     {
         for (int i=0; i < cells.Count; i++)
         {
-            List<List<Vector2f>> cellBuildings = new List<List<Vector2f>>();
+            List<List<Vector3>> cellBuildings = new List<List<Vector3>>();
             // Use the vertices for buildings because they provide room for roads
             cellBuildings.Add(cells[i].GetComponent<VoronoiCell>().GetCellVertices());
 
@@ -78,22 +90,22 @@ public class VoronoiGenerator : MonoBehaviour {
         }
     }
 
-    ////Draws gizmos
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.black;
-        for (int i = 0; i < cells.Count; i++)
-        {
-            List<Vector2f> cellVertices = cells[i].GetComponent<VoronoiCell>().GetCellVertices();
+    // Gizmos to draw out all the voronoi cells in black
+    //void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.black;
+    //    for (int i = 0; i < cells.Count; i++)
+    //    {
+    //        List<Vector2f> cellVertices = cells[i].GetComponent<VoronoiCell>().GetCellVertices();
 
-            for (int j = 0; j < cellVertices.Count; j++)
-            {
-                int z = (j + 1) % cellVertices.Count;
+    //        for (int j = 0; j < cellVertices.Count; j++)
+    //        {
+    //            int z = (j + 1) % cellVertices.Count;
 
-                Vector3 startVector = new Vector3(cellVertices[j].x, cellVertices[j].y, 0);
-                Vector3 endVector = new Vector3(cellVertices[z].x, cellVertices[z].y, 0);
-                Gizmos.DrawLine(startVector, endVector);
-            }
-        }
-    }
+    //            Vector3 startVector = new Vector3(cellVertices[j].x, cellVertices[j].y, 0);
+    //            Vector3 endVector = new Vector3(cellVertices[z].x, cellVertices[z].y, 0);
+    //            Gizmos.DrawLine(startVector, endVector);
+    //        }
+    //    }
+    //}
 }

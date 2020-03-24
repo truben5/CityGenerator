@@ -8,10 +8,10 @@ public class StructureLine {
     private Vector3 _end;
     private float length;
 
-    public StructureLine(Vector2f start, Vector2f end)
+    public StructureLine(Vector3 start, Vector3 end)
     {
-        _start = new Vector3(start.x, start.y, 0);
-        _end = new Vector3(end.x, end.y, 0);
+        _start = start;
+        _end = end;
     }
 
     public Vector3 getStart()
