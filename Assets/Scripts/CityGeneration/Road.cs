@@ -4,7 +4,15 @@ using UnityEngine;
 
 public class Road : MonoBehaviour
 {
-    public List<Vector3> vertices;
+    public List<StructureLine> vertices = new List<StructureLine>();
 
+    public void CreateRoad(List<StructureLine> roadVertices)
+    {
+        vertices = roadVertices;
+    }
 
+    private void InstantiateRoad()
+    {
+
+    }
 }

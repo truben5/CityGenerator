@@ -5,31 +5,17 @@ using csDelaunay;
 
 public class VoronoiGenerator : MonoBehaviour {
 
-    public int cellNum;
-    public int width;
-    public int length;
-    public int maxLength;
-    public int roadWidth;
-    public bool walls;
     public GameObject voronoiCell;
     public GameObject parentDiagram;
 
     private List<GameObject> cells = new List<GameObject>();
     private List<GameObject> roads = new List<GameObject>();
 
-    void Start()
-    {
-        GenerateVoronoi();
-        AddRoads();
-        AddBuildings();
-
-    }
-
     // Generates the voronoi diagram from cs Delaunay. Saves the array of vertices for each cell in cells
-    public void GenerateVoronoi()
+    public List<GameObject> GenerateVoronoi(int length, int width, int cellNum)
     {
         Rectf bounds = new Rectf(0, 0, length, width);
-        List<Vector2f> points = CreateRandomPoints();
+        List<Vector2f> points = CreateRandomPoints(length, width, cellNum);
         // Creates diagram
         // Point array, bounds, number of lloyd iterations
         Voronoi voronoi = new Voronoi(points, bounds, 3);
@@ -46,10 +32,12 @@ public class VoronoiGenerator : MonoBehaviour {
 
             cells.Add(voronoiCell);
         }
+
+        return cells;
     }
 
     // Randomly creates a 2d vector in range of length and width
-    private List<Vector2f> CreateRandomPoints()
+    private List<Vector2f> CreateRandomPoints(int length, int width, int cellNum)
     {
         List<Vector2f> points = new List<Vector2f>();
         for (int i=0; i < cellNum; i++)
@@ -57,37 +45,6 @@ public class VoronoiGenerator : MonoBehaviour {
             points.Add(new Vector2f(Random.Range(0, length), Random.Range(0, width)));
         }
         return points;
-    }
-
-    private void AddRoads()
-    {
-        for (int i = 0; i < cells.Count; i++)
-        {
-            cells[i].GetComponent<VoronoiCell>().CellShrink(roadWidth);
-        }
-    }
-
-    private void SetRoads()
-    {
-
-    }
-
-    private void FindConvexHull()
-    {
-
-    }
-
-    // Makes buildings in cells
-    private void AddBuildings()
-    {
-        for (int i=0; i < cells.Count; i++)
-        {
-            List<List<Vector3>> cellBuildings = new List<List<Vector3>>();
-            // Use the vertices for buildings because they provide room for roads
-            cellBuildings.Add(cells[i].GetComponent<VoronoiCell>().GetCellVertices());
-
-            cells[i].GetComponent<VoronoiCell>().SetBuildings(cells[i].GetComponent<CellFill>().MakeBuildings(cellBuildings, maxLength));
-        }
     }
 
     // Gizmos to draw out all the voronoi cells in black
