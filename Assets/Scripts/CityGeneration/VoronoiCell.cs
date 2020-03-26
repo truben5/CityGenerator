@@ -20,7 +20,6 @@ public class VoronoiCell : MonoBehaviour {
     // Sets vertices of voronoi cell and calculates centroid
     public void SetCellVertices(List<Vector2f> regionVertices)
     {
-
         float xSum = 0;
         float ySum = 0;
 
@@ -44,25 +43,26 @@ public class VoronoiCell : MonoBehaviour {
         return buildingsList;
     }
 
-    public void CreateRoads(int roadWidth)
-    {
-        CellShrink(roadWidth);
-    }
-
     // Pulls in all edges of polygons to create room for roads
-    public void CellShrink(int roadWidth)
+    // Returns lines used for roads
+    public List<Line> MakeRoadSpace(int roadWidth)
     {
         Vector2f diffVector = new Vector2f();
+        List<Line> roadLines = new List<Line>();
 
         // Uses centroid to move vertices closer to centroid
         for (int i = 0; i < cellVertices.Count; i++)
         {
+            Line roadSegment = new Line(cellVertices[i], cellVertices[(i + 1) % cellVertices.Count]);
+            roadLines.Add(roadSegment);
+
             diffVector.x = cellVertices[i].x - centroid.x;
             diffVector.y = cellVertices[i].y - centroid.y;
             diffVector.Normalize();
 
             cellVertices[i] = new Vector3(cellVertices[i].x - roadWidth * diffVector.x, cellVertices[i].y - roadWidth * diffVector.y, 0);
         }
+        return roadLines;
     }
 
     // Takes in array of points and creates the building objects within a cell

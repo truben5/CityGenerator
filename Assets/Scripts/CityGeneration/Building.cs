@@ -19,6 +19,11 @@ public class Building : MonoBehaviour {
     public void SetVertices(List<Vector3> buildingVertices)
     {
         flatVertices = buildingVertices;
+        CalculateCenter(buildingVertices);
+    }
+
+    public void CalculateCenter(List<Vector3> buildingVertices)
+    {
         float xSum = 0;
         float ySum = 0;
 

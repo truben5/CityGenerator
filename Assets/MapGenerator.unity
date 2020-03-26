@@ -161,7 +161,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 988841064}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.17791, y: 18.917217, z: 54.98734}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -191,7 +191,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 992234816}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 489, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -222,7 +222,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1061696922}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 130.14296, y: 483.37766, z: -5945.4067}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -242,12 +242,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 200
   length: 200
-  regionNum: 15
-  maxBuildingLength: 15
+  regionNum: 20
+  maxBuildingLength: 10
   roadWidth: 3
   walls: 0
   voronoiGenerator: {fileID: 988841064}
-  road: {fileID: 0}
+  map: {fileID: 992234816}
+  roads: {fileID: 6128363749807048919, guid: 41629aeabab3c7741a5bf724bed002fb, type: 3}
 --- !u!1 &1755331083
 GameObject:
   m_ObjectHideFlags: 0

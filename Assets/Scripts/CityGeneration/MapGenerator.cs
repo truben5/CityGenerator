@@ -5,7 +5,6 @@ using csDelaunay;
 
 public class MapGenerator : MonoBehaviour
 {
-
     public int width;
     public int length;
     public int regionNum;
@@ -13,11 +12,11 @@ public class MapGenerator : MonoBehaviour
     public int roadWidth;
     public bool walls;
     public GameObject voronoiGenerator;
+    public GameObject map;
 
-    public GameObject road;
+    public GameObject roads;
 
     private List<GameObject> mapRegions = new List<GameObject>();
-    private List<GameObject> roads = new List<GameObject>();
 
     void Start()
     {
@@ -31,12 +30,31 @@ public class MapGenerator : MonoBehaviour
         mapRegions = voronoiGenerator.GetComponent<VoronoiGenerator>().GenerateVoronoi(length, width, regionNum);
     }
 
+    // Makes space for roads and calls to create roads instance
     private void AddRoads()
     {
+        List<Line> allRoads = new List<Line>();
+
         for (int i = 0; i < mapRegions.Count; i++)
         {
-            mapRegions[i].GetComponent<VoronoiCell>().CellShrink(roadWidth);
+            List<Line> regionRoads = mapRegions[i].GetComponent<VoronoiCell>().MakeRoadSpace(roadWidth);
+
+            for (int j = 0; j < regionRoads.Count; j++)
+            {
+                allRoads.Add(regionRoads[j]);
+            }
         }
+
+        InstantiateRoads(allRoads);
+    }
+
+    // Instantiates GameObject and calls to create mesh
+    private void InstantiateRoads(List<Line> roadLines)
+    {
+        roads = Instantiate(roads);
+        roads.transform.parent = map.transform;
+        roads.name = "Roads";
+        roads.GetComponent<RoadNetwork>().CreateRoadMesh(roadLines, roadWidth);
     }
 
     // Makes buildings in cells

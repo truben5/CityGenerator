@@ -5,7 +5,7 @@ using UnityEngine;
 public class CellFill : MonoBehaviour {
 
     private List<Vector3> buildingsPoints = new List<Vector3>();
-    private List<StructureLine> buildingLines = new List<StructureLine>();
+    private List<Line> buildingLines = new List<Line>();
 
     // Checks if any sides of plot are longer than max length. If so splits the polygon
     // until all sides are smaller or equal to max length
@@ -18,7 +18,7 @@ public class CellFill : MonoBehaviour {
             for (int j = 0; j < cellPlot[i].Count; j++)
             {
                 int k = (j + 1) % cellPlot[i].Count;
-                StructureLine line = new StructureLine(cellPlot[i][j], cellPlot[i][k]);
+                Line line = new Line(cellPlot[i][j], cellPlot[i][k]);
                 buildingLines.Add(line);
             }
         }
