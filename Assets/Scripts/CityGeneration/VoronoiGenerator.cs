@@ -26,8 +26,7 @@ public class VoronoiGenerator : MonoBehaviour {
             voronoiCell.transform.parent = parentDiagram.transform;
             voronoiCell.name = "cell " + i;
 
-            //voronoiCell.GetComponent<VoronoiCell>().VoronoiCell(voronoi.Regions()[i]);
-
+            // If performance issues this is a place that might be able to be optimized
             List<Vector3> cellVertices = ConvertToUnityVectors(voronoi.Regions()[i]);
             voronoiCell.GetComponent<VoronoiCell>().SetVertices(cellVertices);
 

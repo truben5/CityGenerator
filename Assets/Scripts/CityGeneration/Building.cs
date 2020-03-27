@@ -3,37 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Building : MonoBehaviour {
-
-    private List<Vector3> flatVertices = new List<Vector3>();
-    private Vector3 center = new Vector3();
+public class Building : Structure {
 
     private int height;
 
     void Awake()
     {
         height = Random.Range(15, 40);
-    }
-
-    // Sets vertices for buildings and calculate center vector
-    public void SetVertices(List<Vector3> buildingVertices)
-    {
-        flatVertices = buildingVertices;
-        CalculateCenter(buildingVertices);
-    }
-
-    public void CalculateCenter(List<Vector3> buildingVertices)
-    {
-        float xSum = 0;
-        float ySum = 0;
-
-        for (int i = 0; i < buildingVertices.Count; i++)
-        {
-            xSum += buildingVertices[i].x;
-            ySum += buildingVertices[i].y;
-        }
-        center.x = xSum / buildingVertices.Count;
-        center.y = ySum / buildingVertices.Count;
     }
 
     public void CreateBuildingMesh()
@@ -50,12 +26,12 @@ public class Building : MonoBehaviour {
         List<Vector3> normals = new List<Vector3>();
         List<Vector2> uv = new List<Vector2>();
 
-        for (int i = 0; i < flatVertices.Count; i++)
+        for (int i = 0; i < vertices.Count; i++)
         {
-            AddMeshWall(flatVertices[i], flatVertices[(i + 1) % flatVertices.Count], meshVertices, tris, normals, uv);
+            AddMeshWall(vertices[i], vertices[(i + 1) % vertices.Count], meshVertices, tris, normals, uv);
         }
 
-        AddFlatMeshRoof(meshVertices, tris, normals, uv);
+        AddMeshRoof(meshVertices, tris, normals, uv);
 
         mesh.vertices = meshVertices.ToArray();
 
@@ -97,21 +73,21 @@ public class Building : MonoBehaviour {
         tris.Add(meshVertices.IndexOf(vectors[3]));
         tris.Add(meshVertices.IndexOf(vectors[0]));
     }
-
+    
     // Uses the floor vertices to add a mesh to the top of the building
-    public void AddFlatMeshRoof(List<Vector3> vertices, List<int> tris, List<Vector3> normals, List<Vector2> uv)
+    public void AddMeshRoof(List<Vector3> meshVertices, List<int> tris, List<Vector3> normals, List<Vector2> uv)
     {
-        int startIndex = vertices.Count;
+        int startIndex = meshVertices.Count;
 
-        for (int i=0; i < flatVertices.Count; i++)
+        for (int i=0; i < vertices.Count; i++)
         {
-            int currIndex = vertices.Count;
+            int currIndex = meshVertices.Count;
 
             // Add height to lift the position
-            Vector3 roofVertex = flatVertices[i] + new Vector3(0, 0, height);
+            Vector3 roofVertex = vertices[i] + new Vector3(0, 0, height);
 
 
-            vertices.Add(roofVertex);
+            meshVertices.Add(roofVertex);
 
             // Determine triangles based on if it is first triangle or not
             if (i == 2)
@@ -131,15 +107,5 @@ public class Building : MonoBehaviour {
 
             uv.Add((Vector2)roofVertex);
         }
-    }
-
-    public List<Vector3> GetFlatVertices()
-    {
-        return flatVertices;
-    }
-
-    public Vector3 GetCenter()
-    {
-        return center;
     }
 }

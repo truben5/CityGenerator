@@ -61,7 +61,7 @@ public class VoronoiCell : Structure {
         instanceCellBuilding.GetComponent<Building>().SetVertices(cellBuildingPlot);
 
         // Sets position to the center of the building polygon
-        Vector3 center = instanceCellBuilding.GetComponent<Building>().GetCenter();
+        Vector3 center = instanceCellBuilding.GetComponent<Building>().GetCentroid();
 
         instanceCellBuilding.transform.position = new Vector3();
 

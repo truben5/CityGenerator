@@ -240,9 +240,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f186f36bbb618a44b72062575862fb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 200
-  length: 200
-  regionNum: 20
+  width: 300
+  length: 300
+  regionNum: 25
   maxBuildingLength: 10
   roadWidth: 3
   walls: 0
