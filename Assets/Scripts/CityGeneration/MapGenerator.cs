@@ -64,7 +64,7 @@ public class MapGenerator : MonoBehaviour
         {
             List<List<Vector3>> cellBuildings = new List<List<Vector3>>();
             // Use the vertices for buildings because they provide room for roads
-            cellBuildings.Add(mapRegions[i].GetComponent<VoronoiCell>().GetCellVertices());
+            cellBuildings.Add(mapRegions[i].GetComponent<VoronoiCell>().GetVertices());
 
             mapRegions[i].GetComponent<VoronoiCell>().SetBuildings(mapRegions[i].GetComponent<CellFill>().MakeBuildings(cellBuildings, maxBuildingLength));
         }

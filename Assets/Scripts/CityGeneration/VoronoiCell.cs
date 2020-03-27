@@ -2,40 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VoronoiCell : MonoBehaviour {
+public class VoronoiCell : Structure {
 
-    private List<Vector3> cellVertices = new List<Vector3>();
     private List<GameObject> buildingsList = new List<GameObject>();
-
-    private Vector3 centroid = new Vector3();
 
     public GameObject cellBuilding;
     private GameObject instanceCellBuilding;
-
-    public List<Vector3> GetCellVertices()
-    {
-        return this.cellVertices;
-    }
-
-    // Sets vertices of voronoi cell and calculates centroid
-    public void SetCellVertices(List<Vector2f> regionVertices)
-    {
-        float xSum = 0;
-        float ySum = 0;
-
-        for (int i = 0; i < regionVertices.Count; i++)
-        {
-            // Convert to Vector3 here
-            Vector3 vertex = new Vector3(regionVertices[i].x, regionVertices[i].y, 0);
-
-            cellVertices.Add(vertex);
-            xSum += regionVertices[i].x;
-            ySum += regionVertices[i].y;
-        }
-
-        centroid.x = xSum / regionVertices.Count;
-        centroid.y = ySum / regionVertices.Count;
-    }
 
     // Returns list of all buildings contained in cell
     public List<GameObject> GetBuilding()
@@ -51,16 +23,16 @@ public class VoronoiCell : MonoBehaviour {
         List<Line> roadLines = new List<Line>();
 
         // Uses centroid to move vertices closer to centroid
-        for (int i = 0; i < cellVertices.Count; i++)
+        for (int i = 0; i < vertices.Count; i++)
         {
-            Line roadSegment = new Line(cellVertices[i], cellVertices[(i + 1) % cellVertices.Count]);
+            Line roadSegment = new Line(vertices[i], vertices[(i + 1) % vertices.Count]);
             roadLines.Add(roadSegment);
 
-            diffVector.x = cellVertices[i].x - centroid.x;
-            diffVector.y = cellVertices[i].y - centroid.y;
+            diffVector.x = vertices[i].x - centroid.x;
+            diffVector.y = vertices[i].y - centroid.y;
             diffVector.Normalize();
 
-            cellVertices[i] = new Vector3(cellVertices[i].x - roadWidth * diffVector.x, cellVertices[i].y - roadWidth * diffVector.y, 0);
+            vertices[i] = new Vector3(vertices[i].x - roadWidth * diffVector.x, vertices[i].y - roadWidth * diffVector.y, 0);
         }
         return roadLines;
     }
@@ -95,11 +67,6 @@ public class VoronoiCell : MonoBehaviour {
 
         buildingsList.Add(instanceCellBuilding);
         return instanceCellBuilding;
-    }
-
-    public Vector3 GetCentroid()
-    {
-        return centroid;
     }
 
 

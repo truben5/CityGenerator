@@ -25,7 +25,11 @@ public class VoronoiGenerator : MonoBehaviour {
             voronoiCell = Instantiate(voronoiCell);
             voronoiCell.transform.parent = parentDiagram.transform;
             voronoiCell.name = "cell " + i;
-            voronoiCell.GetComponent<VoronoiCell>().SetCellVertices(voronoi.Regions()[i]);
+
+            //voronoiCell.GetComponent<VoronoiCell>().VoronoiCell(voronoi.Regions()[i]);
+
+            List<Vector3> cellVertices = ConvertToUnityVectors(voronoi.Regions()[i]);
+            voronoiCell.GetComponent<VoronoiCell>().SetVertices(cellVertices);
 
             Vector3 centroid = voronoiCell.GetComponent<VoronoiCell>().GetCentroid();
             voronoiCell.transform.position = new Vector3(centroid.x, centroid.y, 0);
@@ -45,6 +49,18 @@ public class VoronoiGenerator : MonoBehaviour {
             points.Add(new Vector2f(Random.Range(0, length), Random.Range(0, width)));
         }
         return points;
+    }
+
+    private List<Vector3> ConvertToUnityVectors(List<Vector2f> vectors)
+    {
+        List<Vector3> unityVectors = new List<Vector3>();
+        for (int i = 0; i < vectors.Count; i++)
+        {
+            Vector3 newVector = new Vector3(vectors[i].x, vectors[i].y, 0);
+            unityVectors.Add(newVector);
+        }
+
+        return unityVectors;
     }
 
     // Gizmos to draw out all the voronoi cells in black
