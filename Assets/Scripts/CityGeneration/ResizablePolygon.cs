@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Resizeable : MonoBehaviour
+public abstract class ResizablePolygon : MonoBehaviour
 {
     protected Vector3 centroid;
     protected List<Vector3> vertices;
@@ -12,9 +12,9 @@ public abstract class Resizeable : MonoBehaviour
         return vertices;
     }
 
-    public void SetVertices(List<Vector3> structureVertices)
+    public void SetVertices(List<Vector3> polygonVertices)
     {
-        vertices = structureVertices;
+        vertices = polygonVertices;
         CalculateCentroid();
     }
 
@@ -23,16 +23,26 @@ public abstract class Resizeable : MonoBehaviour
         return centroid;
     }
 
-    // Calculates position of the vertex that has been pulled in closer to the center of the structure
-    public Vector3 PullInStructureVertex(Vector3 vertex, int modifier = 1)
+    protected List<Vector3> ShrinkPolygon(int modifier = 1)
+    {
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            vertices[i] = PullInPolygonVertex(vertices[i], modifier);
+        }
+
+        return vertices;
+    }
+
+    // Calculates position of the vertex that has been pulled in closer to the center of the polygon
+    protected Vector3 PullInPolygonVertex(Vector3 vertex, int modifier)
     {
         Vector3 diffVector = CalculateCentroidDistanceVector(vertex);
         Vector3 newVertex = new Vector3(vertex.x - modifier * diffVector.x, vertex.y - modifier * diffVector.y, 0);
         return newVertex;
     }
 
-    // Calculates the position of the vertex that has been pushed away from the center of the structure
-    public Vector3 PushOutStructureVertex(Vector3 vertex, int modifier = 1)
+    // Calculates the position of the vertex that has been pushed away from the center of the polygon
+    protected Vector3 PushOutPolygonVertex(Vector3 vertex, int modifier)
     {
         Vector3 diffVector = CalculateCentroidDistanceVector(vertex);
         Vector3 newVertex = new Vector3(vertex.x + modifier * diffVector.x, vertex.y + modifier * diffVector.y, 0);
@@ -41,7 +51,7 @@ public abstract class Resizeable : MonoBehaviour
 
     //protected abstract Vector3 ExtractVertices();
 
-    // Calculates difference vector between a vertex and the structure centroid
+    // Calculates difference vector between a vertex and the polygon centroid
     protected Vector3 CalculateCentroidDistanceVector(Vector3 vertex)
     {
         Vector3 diffVector = new Vector3();
@@ -53,7 +63,7 @@ public abstract class Resizeable : MonoBehaviour
         return diffVector;
     }
 
-    // Calculate the centroid of the structure
+    // Calculate the centroid of the polygon
     protected void CalculateCentroid()
     {
         float xSum = 0;

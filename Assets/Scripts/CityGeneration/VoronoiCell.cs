@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VoronoiCell : Structure {
+public class VoronoiCell : ResizablePolygon {
 
     private List<GameObject> buildingsList = new List<GameObject>();
 
@@ -25,6 +25,9 @@ public class VoronoiCell : Structure {
         // Uses centroid to move vertices closer to centroid
         for (int i = 0; i < vertices.Count; i++)
         {
+
+            /// NEED TO LOOK AT THIS WITH INHERITED CLASS
+
             Line roadSegment = new Line(vertices[i], vertices[(i + 1) % vertices.Count]);
             roadLines.Add(roadSegment);
 
@@ -52,18 +55,16 @@ public class VoronoiCell : Structure {
         }
     }
 
-    // Creates game object instance of building and sets position to the center of the building vertices
+    // Creates game object instance of building 
     public GameObject InstantiateBuilding(GameObject buildingListObject, List<Vector3> cellBuildingPlot, int buildingNum)
     {
         instanceCellBuilding = Instantiate(cellBuilding);
         instanceCellBuilding.transform.parent = buildingListObject.transform;
         instanceCellBuilding.name = "building " + buildingNum;
-        instanceCellBuilding.GetComponent<Building>().SetVertices(cellBuildingPlot);
-
-        // Sets position to the center of the building polygon
-        Vector3 center = instanceCellBuilding.GetComponent<Building>().GetCentroid();
-
         instanceCellBuilding.transform.position = new Vector3();
+
+        instanceCellBuilding.GetComponent<Building>().SetVertices(cellBuildingPlot);
+        instanceCellBuilding.GetComponent<Building>().ShrinkBuilding();
 
         buildingsList.Add(instanceCellBuilding);
         return instanceCellBuilding;

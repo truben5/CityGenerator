@@ -243,7 +243,7 @@ MonoBehaviour:
   width: 300
   length: 300
   regionNum: 25
-  maxBuildingLength: 10
+  maxBuildingLength: 15
   roadWidth: 3
   walls: 0
   voronoiGenerator: {fileID: 988841064}

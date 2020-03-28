@@ -54,6 +54,7 @@ public class MapGenerator : MonoBehaviour
         roads = Instantiate(roads);
         roads.transform.parent = map.transform;
         roads.name = "Roads";
+        roads.transform.position = new Vector3();
         roads.GetComponent<RoadNetwork>().CreateRoadMesh(roadLines, roadWidth);
     }
 
@@ -63,10 +64,11 @@ public class MapGenerator : MonoBehaviour
         for (int i = 0; i < mapRegions.Count; i++)
         {
             List<List<Vector3>> cellBuildings = new List<List<Vector3>>();
-            // Use the vertices for buildings because they provide room for roads
             cellBuildings.Add(mapRegions[i].GetComponent<VoronoiCell>().GetVertices());
 
-            mapRegions[i].GetComponent<VoronoiCell>().SetBuildings(mapRegions[i].GetComponent<CellFill>().MakeBuildings(cellBuildings, maxBuildingLength));
+            cellBuildings = mapRegions[i].GetComponent<CellFill>().MakeBuildings(cellBuildings, maxBuildingLength);
+
+            mapRegions[i].GetComponent<VoronoiCell>().SetBuildings(cellBuildings);
         }
     }
 }

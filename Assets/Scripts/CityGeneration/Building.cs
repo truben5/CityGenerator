@@ -3,13 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Building : Structure {
+public class Building : ResizablePolygon {
 
     private int height;
+    private int surroundingSpace;
 
     void Awake()
     {
         height = Random.Range(15, 40);
+        surroundingSpace = Random.Range(1, 3);
+    }
+
+    // EACH POINT SHOULD BE RANDOM SO IT ISN't AS UNIFORM
+    public void ShrinkBuilding()
+    {
+        ShrinkPolygon(surroundingSpace);
     }
 
     public void CreateBuildingMesh()
