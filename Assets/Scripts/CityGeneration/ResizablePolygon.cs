@@ -23,33 +23,22 @@ public abstract class ResizablePolygon : MonoBehaviour
         return centroid;
     }
 
-    protected List<Vector3> ShrinkPolygon(int modifier = 1)
-    {
-        for (int i = 0; i < vertices.Count; i++)
-        {
-            vertices[i] = PullInPolygonVertex(vertices[i], modifier);
-        }
-
-        return vertices;
-    }
-
     // Calculates position of the vertex that has been pulled in closer to the center of the polygon
-    protected Vector3 PullInPolygonVertex(Vector3 vertex, int modifier)
+    protected Vector3 PullInPolygonVertex(Vector3 vertex, float modifier)
     {
         Vector3 diffVector = CalculateCentroidDistanceVector(vertex);
         Vector3 newVertex = new Vector3(vertex.x - modifier * diffVector.x, vertex.y - modifier * diffVector.y, 0);
+
         return newVertex;
     }
 
     // Calculates the position of the vertex that has been pushed away from the center of the polygon
-    protected Vector3 PushOutPolygonVertex(Vector3 vertex, int modifier)
+    protected Vector3 PushOutPolygonVertex(Vector3 vertex, float modifier)
     {
         Vector3 diffVector = CalculateCentroidDistanceVector(vertex);
         Vector3 newVertex = new Vector3(vertex.x + modifier * diffVector.x, vertex.y + modifier * diffVector.y, 0);
         return newVertex;
     }
-
-    //protected abstract Vector3 ExtractVertices();
 
     // Calculates difference vector between a vertex and the polygon centroid
     protected Vector3 CalculateCentroidDistanceVector(Vector3 vertex)

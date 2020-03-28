@@ -5,25 +5,27 @@ using UnityEngine;
 
 public class Building : ResizablePolygon {
 
-    private int height;
-    private int surroundingSpace;
+    private float height;
 
     void Awake()
     {
-        height = Random.Range(15, 40);
-        surroundingSpace = Random.Range(1, 3);
+        height = Random.Range(15f, 30f);
     }
 
-    // EACH POINT SHOULD BE RANDOM SO IT ISN't AS UNIFORM
+    // Pulls in each point a random amount towards centroid
     public void ShrinkBuilding()
     {
-        ShrinkPolygon(surroundingSpace);
+        for (int i= 0; i < vertices.Count; i++)
+        {
+            float pullAmount = Random.Range(1.0f, 4.0f);
+            vertices[i] = PullInPolygonVertex(vertices[i], pullAmount);
+        }
     }
 
     public void CreateBuildingMesh()
     {
         MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        meshRenderer.sharedMaterial = new Material(Shader.Find("Standard"));
+        meshRenderer.sharedMaterial = Resources.Load("Material/BuildingMaterial", typeof(Material)) as Material;
 
         MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
 

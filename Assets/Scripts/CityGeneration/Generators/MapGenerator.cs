@@ -9,7 +9,7 @@ public class MapGenerator : MonoBehaviour
     public int length;
     public int regionNum;
     public int maxBuildingLength;
-    public int roadWidth;
+    public float roadWidth;
     public bool walls;
     public GameObject voronoiGenerator;
     public GameObject map;
@@ -23,6 +23,8 @@ public class MapGenerator : MonoBehaviour
         GenerateMapRegions();
         AddRoads();
         AddBuildings();
+        // REMOVE LATER
+        map.transform.Rotate(-90,0,0);
     }
 
     private void GenerateMapRegions()

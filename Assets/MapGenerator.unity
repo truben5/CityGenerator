@@ -190,13 +190,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 992234816}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &1061696922
 GameObject:
   m_ObjectHideFlags: 0
@@ -243,8 +243,8 @@ MonoBehaviour:
   width: 300
   length: 300
   regionNum: 25
-  maxBuildingLength: 15
-  roadWidth: 3
+  maxBuildingLength: 30
+  roadWidth: 5
   walls: 0
   voronoiGenerator: {fileID: 988841064}
   map: {fileID: 992234816}
@@ -334,13 +334,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1755331083}
-  m_LocalRotation: {x: 0.96281445, y: -0.020757027, z: 0.25798532, w: 0.07746629}
+  m_LocalRotation: {x: 0.9186501, y: -0.079979464, z: 0.2461515, w: 0.29848748}
   m_LocalPosition: {x: -65, y: 636, z: 113}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 170.8, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 144, y: -30, z: 0}
 --- !u!1 &1981487924
 GameObject:
   m_ObjectHideFlags: 0

@@ -17,25 +17,17 @@ public class VoronoiCell : ResizablePolygon {
 
     // Pulls in all edges of polygons to create room for roads
     // Returns lines used for roads
-    public List<Line> MakeRoadSpace(int roadWidth)
+    public List<Line> MakeRoadSpace(float roadWidth)
     {
-        Vector2f diffVector = new Vector2f();
         List<Line> roadLines = new List<Line>();
 
         // Uses centroid to move vertices closer to centroid
         for (int i = 0; i < vertices.Count; i++)
         {
-
-            /// NEED TO LOOK AT THIS WITH INHERITED CLASS
-
             Line roadSegment = new Line(vertices[i], vertices[(i + 1) % vertices.Count]);
             roadLines.Add(roadSegment);
 
-            diffVector.x = vertices[i].x - centroid.x;
-            diffVector.y = vertices[i].y - centroid.y;
-            diffVector.Normalize();
-
-            vertices[i] = new Vector3(vertices[i].x - roadWidth * diffVector.x, vertices[i].y - roadWidth * diffVector.y, 0);
+            vertices[i] = PullInPolygonVertex(vertices[i], roadWidth);
         }
         return roadLines;
     }

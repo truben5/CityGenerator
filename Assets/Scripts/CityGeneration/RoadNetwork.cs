@@ -6,12 +6,12 @@ public class RoadNetwork : MonoBehaviour
 {
     private List<Line> roads = new List<Line>();
 
-    public void CreateRoadMesh(List<Line> roadLines, int roadWidth)
+    public void CreateRoadMesh(List<Line> roadLines, float roadWidth)
     {
         roads = roadLines;
 
         MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        meshRenderer.sharedMaterial = new Material(Shader.Find("Standard"));
+        meshRenderer.sharedMaterial = Resources.Load("Material/RoadMaterial", typeof(Material)) as Material;
 
         MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
 
@@ -40,7 +40,7 @@ public class RoadNetwork : MonoBehaviour
         meshFilter.mesh = mesh;
     }
 
-    private void AddMeshSegment(int roadWidth, Line segment, List<Vector3> meshVertices, List<int> tris, List<Vector3> normals, List<Vector2> uv)
+    private void AddMeshSegment(float roadWidth, Line segment, List<Vector3> meshVertices, List<int> tris, List<Vector3> normals, List<Vector2> uv)
     {
         Vector3 leftDiffVector = new Vector3(0, -roadWidth, 0);
         Vector3 rightDiffVector = new Vector3(0, roadWidth, 0);
