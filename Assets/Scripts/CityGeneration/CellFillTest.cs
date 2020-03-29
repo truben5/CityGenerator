@@ -85,9 +85,9 @@ public class CellFillTest : MonoBehaviour {
 
         Debug.Log("Test 1");
         // Slope between (10,40) and (10,30)
-        float slope = Geometry.Slope(plot1[0].x, plot1[0].y, plot1[1].x, plot1[1].y);
+        float slope = Geometry.Slope(plot1[0], plot1[1]);
         float invSlope = Geometry.InvSlope(slope);
-        midPoint = Geometry.Midpoint(plot1[0].x, plot1[0].y, plot1[1].x, plot1[1].y);
+        midPoint = Geometry.Midpoint(plot1[0], plot1[1]);
         if (midPoint.x != 10 || midPoint.y != 35)
         {
             throw new System.Exception("Incorrect Midpoint");
@@ -110,9 +110,9 @@ public class CellFillTest : MonoBehaviour {
         Debug.Log("Test 2");
         lineSeg = null;
         // Between (10,30) and (20,20)
-        slope = Geometry.Slope(plot1[1].x, plot1[1].y, plot1[2].x, plot1[2].y);
+        slope = Geometry.Slope(plot1[1], plot1[2]);
         invSlope = Geometry.InvSlope(slope);
-        midPoint = Geometry.Midpoint(plot1[1].x, plot1[1].y, plot1[2].x, plot1[2].y);
+        midPoint = Geometry.Midpoint(plot1[1], plot1[2]);
 
         lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(2, midPoint, invSlope, plot1);
         if (lineSeg.Count > 1 || lineSeg[0] != 3)
@@ -129,10 +129,10 @@ public class CellFillTest : MonoBehaviour {
 
         Debug.Log("Test 3");
         // Slope between (20,20) and (30,40)
-        slope = Geometry.Slope(plot1[2].x, plot1[2].y, plot1[3].x, plot1[3].y);
+        slope = Geometry.Slope(plot1[2], plot1[3]);
         //Debug.Log(slope);
         invSlope = Geometry.InvSlope(slope);
-        midPoint = Geometry.Midpoint(plot1[2].x, plot1[2].y, plot1[3].x, plot1[3].y);
+        midPoint = Geometry.Midpoint(plot1[2], plot1[3]);
         //Debug.Log(invSlope);
         lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(3, midPoint, invSlope, plot1);
         if (lineSeg[0] != 0 || lineSeg[1] != 1)
@@ -143,9 +143,9 @@ public class CellFillTest : MonoBehaviour {
         Debug.Log("Test 4");
         lineSeg = null;
         // Between (30,40) and (10,40)
-        slope = Geometry.Slope(plot1[3].x, plot1[3].y, plot1[0].x, plot1[0].y);
+        slope = Geometry.Slope(plot1[3], plot1[0]);
         invSlope = Geometry.InvSlope(slope);
-        midPoint = Geometry.Midpoint(plot1[3].x, plot1[3].y, plot1[0].x, plot1[0].y);
+        midPoint = Geometry.Midpoint(plot1[3], plot1[0]);
         lineSeg = voronoiCell.GetComponent<CellFill>().LineIntersection(0, midPoint, invSlope, plot1);
         if (lineSeg.Count > 1 || lineSeg[0] != 2)
         {
@@ -162,7 +162,7 @@ public class CellFillTest : MonoBehaviour {
         /*
          * Testing split plot array for when bisector is hit first and intersection is not an existing vertex
          */
-        midPoint = Geometry.Midpoint(plot1[0].x, plot1[0].y, plot1[1].x, plot1[1].y);
+        midPoint = Geometry.Midpoint(plot1[0], plot1[1]);
         //Debug.Log("midpoint is: " + midPoint + " and intersection is " + intersection);
         List<List<Vector3>> newShapes = voronoiCell.GetComponent<CellFill>().SplitPlotArray(plot1, midPoint, 0, intersection, 2, false);
 

@@ -49,23 +49,14 @@ public class CellFill : MonoBehaviour {
     {
         List<Vector3> myPlot = buildingShape;
 
-        float slope = Geometry.Slope(myPlot[segStartInd].x, myPlot[segStartInd].y, myPlot[segEndInd].x,
-            myPlot[segEndInd].y);
+        float slope = Geometry.Slope(myPlot[segStartInd], myPlot[segEndInd]);
 
         float invSlope = Geometry.InvSlope(slope);
 
-        Vector3 midPoint = Geometry.Midpoint(myPlot[segStartInd].x, myPlot[segStartInd].y,
-            myPlot[segEndInd].x, myPlot[segEndInd].y);
+        Vector3 midPoint = Geometry.Midpoint(myPlot[segStartInd], myPlot[segEndInd]);
 
-        Vector3 nextLinePoint;
-        if (double.IsInfinity(invSlope))
-        {
-            nextLinePoint = new Vector3(midPoint.x, midPoint.y + 1);
-        }
-        else
-        {
-            nextLinePoint = new Vector3(midPoint.x + 1, midPoint.y + invSlope);
-        }
+        Vector3 nextLinePoint = Geometry.NextPointInLine(midPoint, invSlope);
+
         List<int> intersectingSeg = LineIntersection(segStartInd, midPoint, invSlope, myPlot);
 
         bool intersectIsVertex = false;
@@ -156,7 +147,7 @@ public class CellFill : MonoBehaviour {
 
     public bool TooBig(Vector3 start, Vector3 end, int maxLength)
     {
-        float dist = Geometry.Distance(start.x, start.y, end.x, end.y);
+        float dist = Geometry.Distance(start, end);
 
         if (dist > maxLength)
         {
@@ -182,7 +173,7 @@ public class CellFill : MonoBehaviour {
             int j = (i) % plot.Count;
             int l = (i + 1) % plot.Count;
 
-            float b = midPoint.y - invSlope * midPoint.x;
+            float b = Geometry.YIntercept(midPoint, invSlope);
 
             location = Geometry.RelationToLine(invSlope, b, plot[l], midPoint.x);
             if (trend == 2)

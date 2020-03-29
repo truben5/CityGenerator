@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoadSegment : MonoBehaviour
+public class RoadSegment
 {
-    public Vector3 x1;
-    public Vector3 x2;
-    public Vector3 y1;
-    public Vector3 y2;
+    public Line closerLine;
+    public Line furtherLine;
 
-    public RoadSegment(Vector3 x_1, Vector3 x_2, Vector3 y_1, Vector3 y_2)
+    private float slope;
+
+    public RoadSegment(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4)
     {
-        x1 = x_1;
-        x2 = x_2;
-        y1 = y_1;
-        y2 = y_2;
+        closerLine = new Line(v1, v2);
+        furtherLine = new Line(v3, v4);
+
+        slope = Geometry.Slope(v1, v2);
     }
 }

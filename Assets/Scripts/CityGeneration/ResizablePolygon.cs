@@ -6,6 +6,7 @@ public abstract class ResizablePolygon : MonoBehaviour
 {
     protected Vector3 centroid;
     protected List<Vector3> vertices;
+    protected float perimeter;
 
     public List<Vector3> GetVertices()
     {
@@ -15,12 +16,17 @@ public abstract class ResizablePolygon : MonoBehaviour
     public void SetVertices(List<Vector3> polygonVertices)
     {
         vertices = polygonVertices;
-        CalculateCentroid();
+        CalculateProperties();
     }
 
     public Vector3 GetCentroid()
     {
         return centroid;
+    }
+
+    public float GetPerimeter()
+    {
+        return perimeter;
     }
 
     // Calculates position of the vertex that has been pulled in closer to the center of the polygon
@@ -52,8 +58,8 @@ public abstract class ResizablePolygon : MonoBehaviour
         return diffVector;
     }
 
-    // Calculate the centroid of the polygon
-    protected void CalculateCentroid()
+    // Calculate the centroid and perimeter of polygon
+    protected void CalculateProperties()
     {
         float xSum = 0;
         float ySum = 0;
@@ -62,9 +68,11 @@ public abstract class ResizablePolygon : MonoBehaviour
         {
             xSum += vertices[i].x;
             ySum += vertices[i].y;
+
+            perimeter +=Geometry.Distance(vertices[i], vertices[(i+1)%vertices.Count]);
         }
 
         centroid.x = xSum / vertices.Count;
-        centroid.y = ySum / vertices.Count;
+        centroid.y = ySum / vertices.Count; 
     }
 }

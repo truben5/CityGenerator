@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class RoadNetwork : MonoBehaviour
 {
-    private List<Line> roads = new List<Line>();
+    private List<RoadSegment> roads = new List<RoadSegment>();
 
-    public void CreateRoadMesh(List<Line> roadLines, float roadWidth)
+    public void CreateRoadMesh(List<RoadSegment> roadSegments, float roadWidth)
     {
-        roads = roadLines;
+        roads = roadSegments;
 
         MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = Resources.Load("Material/RoadMaterial", typeof(Material)) as Material;
@@ -22,9 +22,9 @@ public class RoadNetwork : MonoBehaviour
         List<Vector3> normals = new List<Vector3>();
         List<Vector2> uv = new List<Vector2>();
 
-        for (int i = 0; i < roadLines.Count; i++)
+        for (int i = 0; i < roadSegments.Count; i++)
         {
-            AddMeshSegment(roadWidth, roadLines[i], meshVertices, tris, normals, uv);
+            AddMeshSegment(roadWidth, roadSegments[i], meshVertices, tris, normals, uv);
         }
 
         mesh.vertices = meshVertices.ToArray();
@@ -40,16 +40,16 @@ public class RoadNetwork : MonoBehaviour
         meshFilter.mesh = mesh;
     }
 
-    private void AddMeshSegment(float roadWidth, Line segment, List<Vector3> meshVertices, List<int> tris, List<Vector3> normals, List<Vector2> uv)
+    private void AddMeshSegment(float roadWidth, RoadSegment segment, List<Vector3> meshVertices, List<int> tris, List<Vector3> normals, List<Vector2> uv)
     {
         Vector3 leftDiffVector = new Vector3(0, -roadWidth, 0);
         Vector3 rightDiffVector = new Vector3(0, roadWidth, 0);
 
         Vector3[] vectors = {
-                                segment.GetStart() + leftDiffVector,
-                                segment.GetStart() + rightDiffVector,
-                                segment.GetEnd() + rightDiffVector,
-                                segment.GetEnd() + leftDiffVector
+                                segment.furtherLine.GetStart(),
+                                segment.furtherLine.GetEnd(),
+                                segment.closerLine.GetEnd(),
+                                segment.closerLine.GetStart()
         };
 
         for (int i = 0; i < 4; i++)
@@ -60,12 +60,12 @@ public class RoadNetwork : MonoBehaviour
         }
 
         // Add triangle for quad
-        tris.Add(meshVertices.IndexOf(vectors[1]));
-        tris.Add(meshVertices.IndexOf(vectors[2]));
-        tris.Add(meshVertices.IndexOf(vectors[3]));
-
-        tris.Add(meshVertices.IndexOf(vectors[3]));
         tris.Add(meshVertices.IndexOf(vectors[0]));
         tris.Add(meshVertices.IndexOf(vectors[1]));
+        tris.Add(meshVertices.IndexOf(vectors[2]));
+
+        tris.Add(meshVertices.IndexOf(vectors[2]));
+        tris.Add(meshVertices.IndexOf(vectors[3]));
+        tris.Add(meshVertices.IndexOf(vectors[0]));
     }
 }

@@ -23,7 +23,6 @@ public class MapGenerator : MonoBehaviour
         GenerateMapRegions();
         AddRoads();
         AddBuildings();
-        // REMOVE LATER
         map.transform.Rotate(-90,0,0);
     }
 
@@ -35,11 +34,11 @@ public class MapGenerator : MonoBehaviour
     // Makes space for roads and calls to create roads instance
     private void AddRoads()
     {
-        List<Line> allRoads = new List<Line>();
+        List<RoadSegment> allRoads = new List<RoadSegment>();
 
         for (int i = 0; i < mapRegions.Count; i++)
         {
-            List<Line> regionRoads = mapRegions[i].GetComponent<VoronoiCell>().MakeRoadSpace(roadWidth);
+            List<RoadSegment> regionRoads = mapRegions[i].GetComponent<VoronoiCell>().MakeRoadSpace(roadWidth);
 
             for (int j = 0; j < regionRoads.Count; j++)
             {
@@ -48,10 +47,11 @@ public class MapGenerator : MonoBehaviour
         }
 
         InstantiateRoads(allRoads);
+        //MakeGroundMesh();
     }
 
     // Instantiates GameObject and calls to create mesh
-    private void InstantiateRoads(List<Line> roadLines)
+    private void InstantiateRoads(List<RoadSegment> roadLines)
     {
         roads = Instantiate(roads);
         roads.transform.parent = map.transform;
@@ -72,5 +72,46 @@ public class MapGenerator : MonoBehaviour
 
             mapRegions[i].GetComponent<VoronoiCell>().SetBuildings(cellBuildings);
         }
+    }
+
+    private void MakeGroundMesh()
+    {
+        MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
+
+        meshRenderer.transform.parent = map.transform;
+
+        meshRenderer.sharedMaterial = Resources.Load("Material/RoadMaterial", typeof(Material)) as Material;
+
+        MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
+
+        Mesh mesh = new Mesh();
+
+        Vector3[] vertices = {
+                                new Vector3(0, 0, 0),
+                                new Vector3(width, 0, 0),
+                                new Vector3(width, length, 0),
+                                new Vector3(0, length, 0)
+        };
+
+        int[] tris = { 0, 1, 2, 2, 3, 0};
+        Vector3[] normals = { -Vector3.forward , -Vector3.forward , -Vector3.forward , -Vector3.forward };
+        Vector2[] uv = { 
+                            new Vector2(0, 0),
+                            new Vector2(width, 0),
+                            new Vector2(width, length),
+                            new Vector2(0, length)
+        };
+
+        mesh.vertices = vertices;
+
+        mesh.triangles = tris;
+
+        mesh.normals = normals;
+
+        mesh.uv = uv;
+
+        mesh.RecalculateNormals();
+
+        meshFilter.mesh = mesh;
     }
 }

@@ -4,27 +4,32 @@ using UnityEngine;
 
 public static class Geometry
 {
-    // Calculates distance between two points
-    public static float Distance(float x1, float y1, float x2, float y2)
+    // Calculates distance between two Vectors
+    public static float Distance(Vector3 start, Vector3 end)
     {
-        float x = Mathf.Abs(x2 - x1);
-        float y = Mathf.Abs(y2 - y1);
-        float dist = Mathf.Sqrt(x * x + y * y);
+        float x1 = start.x;
+        float x2 = end.x;
+
+        float y1 = start.y;
+        float y2 = end.y;
+
+        float xDiff = Mathf.Abs(x2 - x1);
+        float yDiff = Mathf.Abs(y2 - y1);
+        float dist = Mathf.Sqrt(xDiff * xDiff + yDiff * yDiff);
         return dist;
     }
 
     // Calculates midpoint between two points
-    public static Vector3 Midpoint(float x1, float y1, float x2, float y2)
+    public static Vector3 Midpoint(Vector3 start, Vector3 end)
     {
-        Vector3 mid = new Vector3((x1 + x2) / 2, (y1 + y2) / 2, 0);
+        Vector3 mid = new Vector3((start.x + end.x) / 2, (start.y + end.y) / 2, 0);
         return mid;
     }
 
-
     // Calculates slope between two points
-    public static float Slope(float x1, float y1, float x2, float y2)
+    public static float Slope(Vector3 start, Vector3 end)
     {
-        float slope = (y2 - y1) / (x2 - x1);
+        float slope = (end.y - start.y) / (end.x - start.x);
         return slope;
     }
 
@@ -58,6 +63,29 @@ public static class Geometry
         float x = (b2 * c1 - b1 * c2) / determinant;
         float y = (a1 * c2 - a2 * c1) / determinant;
         return new Vector3(x, y, 0);
+    }
+
+    // y = mx + b become b = y - mx
+    public static float YIntercept(Vector3 vector, float slope)
+    {
+        return vector.y - slope * vector.x;
+    }
+    
+    // Finds next point on line by one unit with slope
+    public static Vector3 NextPointInLine(Vector3 point, float slope)
+    {
+        Vector3 nextLinePoint;
+
+        if (float.IsInfinity(slope))
+        {
+            nextLinePoint = new Vector3(point.x, point.y + 1);
+        }
+        else
+        {
+            nextLinePoint = new Vector3(point.x + 1, point.y + slope);
+        }
+
+        return nextLinePoint;
     }
 
     // Takes in the slope and y intercept for a line equation.  Determines if point is below, above, or on line 

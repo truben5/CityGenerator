@@ -41,7 +41,7 @@ public class Building : ResizablePolygon {
             AddMeshWall(vertices[i], vertices[(i + 1) % vertices.Count], meshVertices, tris, normals, uv);
         }
 
-        AddMeshRoof(meshVertices, tris, normals, uv);
+        AddFlatMeshRoof(meshVertices, tris, normals, uv);
 
         mesh.vertices = meshVertices.ToArray();
 
@@ -84,8 +84,8 @@ public class Building : ResizablePolygon {
         tris.Add(meshVertices.IndexOf(vectors[0]));
     }
     
-    // Uses the floor vertices to add a mesh to the top of the building
-    public void AddMeshRoof(List<Vector3> meshVertices, List<int> tris, List<Vector3> normals, List<Vector2> uv)
+    // Uses the floor vertices to add a flat mesh to the top of the building
+    public void AddFlatMeshRoof(List<Vector3> meshVertices, List<int> tris, List<Vector3> normals, List<Vector2> uv)
     {
         int startIndex = meshVertices.Count;
 
@@ -95,7 +95,6 @@ public class Building : ResizablePolygon {
 
             // Add height to lift the position
             Vector3 roofVertex = vertices[i] + new Vector3(0, 0, height);
-
 
             meshVertices.Add(roofVertex);
 

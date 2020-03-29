@@ -17,14 +17,15 @@ public class VoronoiCell : ResizablePolygon {
 
     // Pulls in all edges of polygons to create room for roads
     // Returns lines used for roads
-    public List<Line> MakeRoadSpace(float roadWidth)
+    public List<RoadSegment> MakeRoadSpace(float roadWidth)
     {
-        List<Line> roadLines = new List<Line>();
+        List<RoadSegment> roadLines = new List<RoadSegment>();
 
         // Uses centroid to move vertices closer to centroid
         for (int i = 0; i < vertices.Count; i++)
         {
-            Line roadSegment = new Line(vertices[i], vertices[(i + 1) % vertices.Count]);
+            RoadSegment roadSegment = CreateRoadSegment(vertices[i], vertices[(i + 1) % vertices.Count], roadWidth);
+
             roadLines.Add(roadSegment);
 
             vertices[i] = PullInPolygonVertex(vertices[i], roadWidth);
@@ -42,8 +43,12 @@ public class VoronoiCell : ResizablePolygon {
 
         for (int i = 0; i < cellBuildings.Count; i++)
         {
-            GameObject buildingObject = InstantiateBuilding(buildings, cellBuildings[i], i);
-            buildingObject.GetComponent<Building>().CreateBuildingMesh();
+            // Only instantiate buildings with at least 4 points
+            if (cellBuildings[i].Count > 3)
+            {
+                GameObject buildingObject = InstantiateBuilding(buildings, cellBuildings[i], i);
+                buildingObject.GetComponent<Building>().CreateBuildingMesh();
+            }
         }
     }
 
@@ -62,6 +67,16 @@ public class VoronoiCell : ResizablePolygon {
         return instanceCellBuilding;
     }
 
+    private RoadSegment CreateRoadSegment(Vector3 start, Vector3 end, float roadWidth)
+    {
+        Vector3 closerStart = PullInPolygonVertex(start, roadWidth);
+        Vector3 closerEnd = PullInPolygonVertex(end, roadWidth);
+        Vector3 furtherStart = PushOutPolygonVertex(start, roadWidth);
+        Vector3 furtherEnd = PushOutPolygonVertex(end, roadWidth);
+
+        RoadSegment segment = new RoadSegment(closerStart, closerEnd, furtherStart, furtherEnd);
+        return segment;
+    }
 
     // Gizmos to draw out all the buildings in red
     //void OnDrawGizmos()
