@@ -2,7 +2,6 @@
 using UnityEngine;
 using csDelaunay;
 
-
 public class VoronoiGenerator : MonoBehaviour {
 
     public GameObject voronoiCell;

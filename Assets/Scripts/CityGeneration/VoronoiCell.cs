@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using Microsoft.Win32;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using UnityEngine;
 
 public class VoronoiCell : ResizablePolygon {
@@ -17,20 +19,17 @@ public class VoronoiCell : ResizablePolygon {
 
     // Pulls in all edges of polygons to create room for roads
     // Returns lines used for roads
-    public List<RoadSegment> MakeRoadSpace(float roadWidth)
+    public void MakeRoadSpace(float roadWidth)
     {
-        List<RoadSegment> roadLines = new List<RoadSegment>();
-
         // Uses centroid to move vertices closer to centroid
         for (int i = 0; i < vertices.Count; i++)
         {
-            RoadSegment roadSegment = CreateRoadSegment(vertices[i], vertices[(i + 1) % vertices.Count], roadWidth);
+            //RoadSegment roadSegment = CreateRoadSegment(vertices[i], vertices[(i + 1) % vertices.Count], roadWidth);
 
-            roadLines.Add(roadSegment);
+            //roadLines.Add(roadSegment);
 
             vertices[i] = PullInPolygonVertex(vertices[i], roadWidth);
         }
-        return roadLines;
     }
 
     // Takes in array of points and creates the building objects within a cell
@@ -67,15 +66,70 @@ public class VoronoiCell : ResizablePolygon {
         return instanceCellBuilding;
     }
 
-    private RoadSegment CreateRoadSegment(Vector3 start, Vector3 end, float roadWidth)
+    public void CreateCellMesh()
     {
-        Vector3 closerStart = PullInPolygonVertex(start, roadWidth);
-        Vector3 closerEnd = PullInPolygonVertex(end, roadWidth);
-        Vector3 furtherStart = PushOutPolygonVertex(start, roadWidth);
-        Vector3 furtherEnd = PushOutPolygonVertex(end, roadWidth);
+        MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
+        meshRenderer.sharedMaterial = Resources.Load("Material/GroundMaterial", typeof(Material)) as Material;
 
-        RoadSegment segment = new RoadSegment(closerStart, closerEnd, furtherStart, furtherEnd);
-        return segment;
+        MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
+
+        Mesh mesh = new Mesh();
+
+        // Look into relative position and rotation ?
+        meshRenderer.transform.position = new Vector3(0,0,.1f);
+        meshRenderer.transform.rotation = new Quaternion();
+        meshRenderer.transform.Rotate(90, 0, 0);
+
+        List<Vector3> meshVertices = new List<Vector3>();
+        List<int> tris = new List<int>();
+        List<Vector3> normals = new List<Vector3>();
+        List<Vector2> uv = new List<Vector2>();
+
+
+        FormatCellMesh(meshVertices, tris, normals, uv);
+
+        
+        mesh.vertices = meshVertices.ToArray();
+
+        mesh.triangles = tris.ToArray();
+
+        mesh.normals = normals.ToArray();
+
+        mesh.uv = uv.ToArray();
+
+        mesh.RecalculateNormals();
+
+        meshFilter.mesh = mesh;
+    }
+
+    public void FormatCellMesh(List<Vector3> meshVertices, List<int> tris, List<Vector3> normals, List<Vector2> uv)
+    {
+        int startIndex = meshVertices.Count;
+
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            int currIndex = meshVertices.Count;
+
+            meshVertices.Add(vertices[i]);
+
+            // Determine triangles based on if it is first triangle or not
+            if (i == 2)
+            {
+                tris.Add(startIndex);
+                tris.Add(startIndex + 1);
+                tris.Add(startIndex + 2);
+            }
+            else if (i > 2)
+            {
+                tris.Add(startIndex);
+                tris.Add(currIndex - 1);
+                tris.Add(currIndex);
+            }
+
+            normals.Add(-Vector3.forward);
+
+            uv.Add((Vector2)vertices[i]);
+        }
     }
 
     // Gizmos to draw out all the buildings in red

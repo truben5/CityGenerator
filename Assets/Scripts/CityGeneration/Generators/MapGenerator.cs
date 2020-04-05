@@ -14,8 +14,6 @@ public class MapGenerator : MonoBehaviour
     public GameObject voronoiGenerator;
     public GameObject map;
 
-    public GameObject roads;
-
     private List<GameObject> mapRegions = new List<GameObject>();
 
     void Start()
@@ -34,30 +32,16 @@ public class MapGenerator : MonoBehaviour
     // Makes space for roads and calls to create roads instance
     private void AddRoads()
     {
-        List<RoadSegment> allRoads = new List<RoadSegment>();
+        //List<RoadSegment> allRoads = new List<RoadSegment>();
 
         for (int i = 0; i < mapRegions.Count; i++)
         {
-            List<RoadSegment> regionRoads = mapRegions[i].GetComponent<VoronoiCell>().MakeRoadSpace(roadWidth);
+            mapRegions[i].GetComponent<VoronoiCell>().MakeRoadSpace(roadWidth);
 
-            for (int j = 0; j < regionRoads.Count; j++)
-            {
-                allRoads.Add(regionRoads[j]);
-            }
+            mapRegions[i].GetComponent<VoronoiCell>().CreateCellMesh();
         }
 
-        InstantiateRoads(allRoads);
-        //MakeGroundMesh();
-    }
-
-    // Instantiates GameObject and calls to create mesh
-    private void InstantiateRoads(List<RoadSegment> roadLines)
-    {
-        roads = Instantiate(roads);
-        roads.transform.parent = map.transform;
-        roads.name = "Roads";
-        roads.transform.position = new Vector3();
-        roads.GetComponent<RoadNetwork>().CreateRoadMesh(roadLines, roadWidth);
+        MakeGroundMesh();
     }
 
     // Makes buildings in cells
